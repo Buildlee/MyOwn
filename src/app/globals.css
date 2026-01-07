@@ -8,34 +8,60 @@
 }
 
 :root {
-  --background: #0f172a;
-  /* Slate 900 */
+  --background: #fdfdff;
+  /* Even softer lavender tint white */
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #7c3aed;
+  /* Violet 600 */
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #eef2f6;
+  /* Very soft border */
+  --input: #eef2f6;
+  --ring: #7c3aed;
+  --radius: 1rem;
+  /* Slightly larger radius for softer look */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  /* More transparent for dynamic bg to shine through */
+  --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+.dark {
+  --background: #020617;
+  /* Brighter deep slate/blue for better dark neon feel */
   --foreground: #f8fafc;
-  /* Slate 50 */
   --card: #1e293b;
-  /* Slate 800 */
   --card-foreground: #f1f5f9;
-  /* Slate 100 */
   --popover: #0f172a;
   --popover-foreground: #f8fafc;
   --primary: #8b5cf6;
-  /* Violet 500 */
   --primary-foreground: #ffffff;
   --secondary: #334155;
-  /* Slate 700 */
   --secondary-foreground: #f8fafc;
   --muted: #334155;
   --muted-foreground: #94a3b8;
-  /* Slate 400 */
   --accent: #1e293b;
   --accent-foreground: #f8fafc;
   --destructive: #ef4444;
-  /* Red 500 */
   --destructive-foreground: #f8fafc;
-  --border: #334155;
+  --border: #475569;
+  /* Slate 600 - more distinct than previous 700ish */
   --input: #1e293b;
   --ring: #8b5cf6;
-  --radius: 0.75rem;
+  --glass-bg: rgba(15, 23, 42, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  /* More visible border */
 }
 
 body {
@@ -68,10 +94,10 @@ body {
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
 }
 
 /* Active state for better mobile feedback */

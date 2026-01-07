@@ -18,6 +18,7 @@ export function useItems() {
                     purchaseDate: new Date(Date.now() - 450 * 86400000).toISOString(),
                     usageCount: 450,
                     costType: 'daily',
+                    status: 'using',
                     category: '💻',
                     icon: '💻'
                 },
@@ -28,6 +29,7 @@ export function useItems() {
                     purchaseDate: new Date(Date.now() - 120 * 86400000).toISOString(),
                     usageCount: 120,
                     costType: 'per_use',
+                    status: 'using',
                     category: '📸',
                     icon: '📸'
                 }
@@ -40,6 +42,12 @@ export function useItems() {
     const addItem = (item: Omit<Item, 'id'>) => {
         const newItem = { ...item, id: Math.random().toString(36).substr(2, 9) };
         const newItems = [newItem, ...items];
+        setItems(newItems);
+        localStorage.setItem('myown_items', JSON.stringify(newItems));
+    };
+
+    const updateItem = (updatedItem: Item) => {
+        const newItems = items.map(i => i.id === updatedItem.id ? updatedItem : i);
         setItems(newItems);
         localStorage.setItem('myown_items', JSON.stringify(newItems));
     };
@@ -57,14 +65,10 @@ export function useItems() {
 
         if (item.costType === 'daily') {
             acc.dailyCost += item.price / days;
-        } else {
-            // For per-use, we could still estimate a daily impact or just show separately.
-            // For dashboard simplicity, let's treat per-use usage as spread over time or per-use cost.
-            // User says "Daily Cost / Per Use Cost".
         }
 
         return acc;
     }, { totalValue: 0, dailyCost: 0 });
 
-    return { items, addItem, deleteItem, summary };
+    return { items, addItem, updateItem, deleteItem, summary };
 }
