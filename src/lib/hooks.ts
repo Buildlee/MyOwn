@@ -58,6 +58,12 @@ export function useItems() {
         localStorage.setItem('myown_items', JSON.stringify(newItems));
     };
 
+    const togglePin = (id: string) => {
+        const newItems = items.map(i => i.id === id ? { ...i, isPinned: !i.isPinned } : i);
+        setItems(newItems);
+        localStorage.setItem('myown_items', JSON.stringify(newItems));
+    };
+
     const summary: SummaryData = items.reduce((acc, item) => {
         acc.totalValue += item.price;
 
@@ -70,5 +76,5 @@ export function useItems() {
         return acc;
     }, { totalValue: 0, dailyCost: 0 });
 
-    return { items, addItem, updateItem, deleteItem, summary };
+    return { items, addItem, updateItem, deleteItem, togglePin, summary };
 }

@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   description: '追踪你物品的真实使用成本',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

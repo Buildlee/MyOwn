@@ -35,6 +35,22 @@
   --glass-bg: rgba(255, 255, 255, 0.4);
   /* More transparent for dynamic bg to shine through */
   --glass-border: rgba(255, 255, 255, 0.5);
+  --calendar-filter: invert(0);
+  --liquid-border: rgba(255, 255, 255, 0.8);
+  --liquid-shadow: rgba(31, 38, 135, 0.04);
+}
+
+/* Responsive Scaling for large mobile screens (e.g. S23 Ultra) */
+@media (min-width: 420px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 480px) {
+  html {
+    font-size: 14px;
+  }
 }
 
 .dark {
@@ -61,6 +77,9 @@
   --ring: #8b5cf6;
   --glass-bg: rgba(15, 23, 42, 0.4);
   --glass-border: rgba(255, 255, 255, 0.15);
+  --calendar-filter: invert(1);
+  --liquid-border: rgba(255, 255, 255, 0.12);
+  --liquid-shadow: rgba(0, 0, 0, 0.3);
   /* More visible border */
 }
 
@@ -76,6 +95,13 @@ body {
   padding-right: env(safe-area-inset-right);
   /* Optimize mobile scrolling */
   -webkit-overflow-scrolling: touch;
+  /* Elegant theme transition engine */
+  transition:
+    background-color 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    color 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Custom scrollbar for a cleaner look */
@@ -100,6 +126,58 @@ body {
   border: 1px solid var(--glass-border);
 }
 
+.glass-modern {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1.2px solid var(--liquid-border);
+  box-shadow: 0 8px 32px 0 var(--liquid-shadow);
+  transition: inherit;
+}
+
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--liquid-border);
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.5),
+    0 8px 32px var(--liquid-shadow);
+  transition: inherit;
+}
+
+.dark .liquid-glass {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--liquid-border);
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.05),
+    0 8px 32px var(--liquid-shadow);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: inherit;
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: inherit;
+}
+
+/* No scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Active state for better mobile feedback */
 .active-pulse:active {
   transform: scale(0.96);
@@ -109,5 +187,41 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+:root {
+  view-transition-name: root;
+}
+
+/* View Transition API - Diagonal Theme Toggle Animation */
+::view-transition-group(root) {
+  animation-duration: 0.8s;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+  animation: reveal-theme 0.8s cubic-bezier(0.23, 1, 0.32, 1) both;
+  clip-path: circle(0% at 95% 5%);
+}
+
+@keyframes reveal-theme {
+  from {
+    clip-path: circle(0% at 95% 5%);
+  }
+
+  to {
+    clip-path: circle(150% at 95% 5%);
   }
 }

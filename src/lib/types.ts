@@ -10,7 +10,8 @@ export interface Item {
     costType: CostType;
     status: ItemStatus;
     category: string;
-    icon: string;
+    icon?: string;
+    isPinned?: boolean;
 }
 
 export interface SummaryData {
