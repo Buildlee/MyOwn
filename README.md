@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyOwn - 理性消费与价值感知
 
-## Getting Started
+> 每一件物品都有其真实成本。MyOwn 帮助你从感性消费转向理性决策。
 
-First, run the development server:
+MyOwn 是一款轻量级的现代 Web 应用，旨在追踪物品的 **日均使用成本** 或 **次均使用成本**。通过直观的视觉反馈和优雅的交互体验，让你清晰感知每一笔投入的实际价值。
 
+![MyOwn Preview](https://raw.githubusercontent.com/shadcn-ui/ui/main/apps/www/public/og.png) *(占位符：此处可替换为项目实际截图)*
+
+---
+
+## ✨ 核心特性
+
+- **💰 真实成本计算**
+  - **日均成本**：基于购买天数自动折算，感知长期支出的微观消耗。
+  - **次均成本**：按实际使用频率更新，让每一件昂贵器材的"性价比"清晰可见。
+- **📱 移动端优先设计**
+  - 响应式毛玻璃（Glassmorphism）布局。
+  - 针对手机端优化的抽屉式交互（Drawer）与悬浮按钮。
+- **🌈 AI 智能配色**
+  - 根据物品名称自动生成和谐的渐变色背景，让每张卡片都独一无二。
+- **⚡ 优雅动效**
+  - 基于 Framer Motion 的顺滑过渡与触觉反馈（Active Scale）。
+- **💾 数据持久化**
+  - 使用 LocalStorage 存储，无需登录，数据即开即用（后续计划支持 IndexedDB）。
+
+## 🛠️ 技术栈
+
+- **框架**: [Next.js 15 (App Router)](https://nextjs.org/)
+- **语言**: [TypeScript](https://www.typescriptlang.org/)
+- **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **动画**: [Framer Motion](https://www.framer.com/motion/)
+- **图标**: [Lucide React](https://lucide.dev/)
+- **工具**: [clsx](https://github.com/lukeed/clsx) & [tailwind-merge](https://github.com/dcastil/tailwind-merge)
+
+## 🚀 快速开始
+
+### 1. 环境准备
+确保你的环境中安装了 [Node.js](https://nodejs.org/) (推荐 v18+)。
+
+### 2. 安装依赖
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. 启动开发服务器
+```bash
+npm run dev
+```
+打开浏览器访问 [http://localhost:3000](http://localhost:3000) 即可开始使用。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📍 开发计划 (Roadmap)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [x] 核心成本计算逻辑
+- [x] 响应式移动端 UI
+- [ ] 3D 图标库集成 (6000+ 资源)
+- [ ] 物品详情页与折旧曲线图
+- [ ] 分类管理与标签筛选
+- [ ] 多货币支持与汇率换算
+- [ ] PWA 支持 (可安装到桌面/手机)
 
-## Learn More
+## 📄 许可证
 
-To learn more about Next.js, take a look at the following resources:
+基于 MIT License 开源。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**MyOwn** - *让每一分钱都花在刀刃上。*
