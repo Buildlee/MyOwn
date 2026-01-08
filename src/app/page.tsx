@@ -149,7 +149,12 @@ export default function Home() {
       } else {
         const dateA = new Date(a.purchaseDate || 0).getTime();
         const dateB = new Date(b.purchaseDate || 0).getTime();
-        comparison = (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        // dateA - dateB => Ascending Timestamp (Oldest first)
+        // Since "Usage Time" is (Now - Date), Oldest Date = Longest Time.
+        // So this logic aligns with:
+        // desc (High -> Low): Longest Time first (Oldest Date)
+        // asc (Low -> High): Shortest Time first (Newest Date)
+        comparison = (isNaN(dateA) ? 0 : dateA) - (isNaN(dateB) ? 0 : dateB);
       }
 
       // 如果比较结果为 0，保持原有顺序
