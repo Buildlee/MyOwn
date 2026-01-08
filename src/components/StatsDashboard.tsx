@@ -81,20 +81,20 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-[#0a0a0c]/98 border border-black/10 dark:border-white/5 rounded-[2.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative"
+                    className="w-full max-w-4xl max-h-[90vh] liquid-glass dark:bg-[#0a0a0c]/98 border border-white/40 dark:border-white/5 rounded-[2.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative"
                 >
                     {/* Header */}
                     <div className="p-8 pb-4 flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-4">
                             <div className={cn(
-                                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transform -rotate-12",
-                                isUsing ? "bg-emerald-500/20 text-emerald-500" : "bg-primary/20 text-primary"
+                                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transform -rotate-12 border border-white/20",
+                                isUsing ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-500" : "bg-primary/20 text-primary"
                             )}>
                                 {isUsing ? <TrendingUp className="w-6 h-6" /> : <History className="w-6 h-6" />}
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">{isUsing ? '使用中资产全景' : '已归档资产回顾'}</h2>
-                                <p className="text-[10px] font-black tracking-[0.2em] text-slate-500 dark:text-muted-foreground uppercase opacity-70">
+                                <h2 className="text-2xl font-black tracking-tight text-black dark:text-white">{isUsing ? '使用中资产全景' : '已归档资产回顾'}</h2>
+                                <p className="text-[10px] font-black tracking-[0.2em] text-black dark:text-muted-foreground uppercase opacity-70">
                                     Statistics <span className="mx-1">·</span> {stats.count} Items
                                 </p>
                             </div>
@@ -103,7 +103,7 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                             onClick={onClose}
                             className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                         >
-                            <X className="w-5 h-5" />
+                            <X className="w-5 h-5 text-black dark:text-muted-foreground" />
                         </button>
                     </div>
 
@@ -112,37 +112,37 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             {/* Key Stats */}
                             <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4">
-                                <div className="p-6 rounded-[2rem] bg-emerald-500/[0.03] border border-emerald-500/10 flex flex-col justify-between group overflow-hidden relative">
-                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 mb-2">资产总值</span>
+                                <div className="p-6 rounded-[2rem] bg-emerald-500/[0.1] dark:bg-emerald-500/[0.05] border border-emerald-500/20 flex flex-col justify-between group overflow-hidden relative shadow-sm">
+                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-emerald-500/60 mb-2">资产总值</span>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-black tracking-tighter text-emerald-600 dark:text-emerald-400">¥{stats.totalValue.toLocaleString()}</span>
+                                        <span className="text-3xl font-black tracking-tighter text-black dark:text-emerald-400">¥{stats.totalValue.toLocaleString()}</span>
                                     </div>
                                 </div>
-                                <div className="p-6 rounded-[2rem] bg-primary/[0.03] border border-primary/10 flex flex-col justify-between group overflow-hidden relative">
-                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">每日均摊感官成本</span>
+                                <div className="p-6 rounded-[2rem] bg-primary/[0.1] dark:bg-primary/[0.05] border border-primary/20 flex flex-col justify-between group overflow-hidden relative shadow-sm">
+                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-primary/60 mb-2">每日均摊感官成本</span>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-black tracking-tighter text-primary">¥{stats.totalDailyBurn.toFixed(2)}</span>
+                                        <span className="text-3xl font-black tracking-tighter text-black dark:text-violet-400">¥{stats.totalDailyBurn.toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Category Distribution */}
-                            <div className="p-6 rounded-[2rem] bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-4 block">资产权重分布</span>
+                            <div className="p-6 rounded-[2rem] bg-black/[0.05] dark:bg-white/[0.02] border border-black/10 dark:border-white/5 shadow-inner">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-muted-foreground/60 mb-4 block">资产权重分布</span>
                                 <div className="space-y-4">
                                     {stats.sortedCategories.slice(0, 3).map(cat => (
                                         <div key={cat.name} className="space-y-1.5">
                                             <div className="flex justify-between items-center text-[11px] font-bold">
-                                                <span className="text-slate-700 dark:text-white/80">{cat.name}</span>
-                                                <span className="opacity-50 text-slate-500 dark:text-muted-foreground">{cat.percentage.toFixed(0)}%</span>
+                                                <span className="text-black dark:text-white/80">{cat.name}</span>
+                                                <span className="text-black dark:text-muted-foreground opacity-100 dark:opacity-50">{cat.percentage.toFixed(0)}%</span>
                                             </div>
-                                            <div className="h-1.5 w-full bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-1.5 w-full bg-black/10 dark:bg-white/5 rounded-full overflow-hidden">
                                                 <motion.div
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${cat.percentage}%` }}
-                                                    className="h-full bg-foreground/20 rounded-full"
+                                                    className="h-full bg-black dark:bg-foreground/20 rounded-full"
                                                 />
                                             </div>
                                         </div>
@@ -154,19 +154,19 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                         {/* Efficiency Insights */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500/80 mb-4 ml-2">
+                                <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-black dark:text-emerald-500/80 mb-4 ml-2">
                                     <Sparkles className="w-3.5 h-3.5" /> 高效能项目 (性价比之王)
                                 </h3>
                                 <div className="space-y-3">
                                     {stats.efficientItems.map(item => (
-                                        <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-white/10 hover:bg-black/[0.05] transition-colors">
+                                        <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-white/80 dark:border-white/10 hover:bg-white dark:hover:bg-black/[0.05] transition-colors shadow-sm">
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl">{item.icon}</span>
-                                                <span className="text-xs font-bold truncate max-w-[120px] text-slate-800 dark:text-white/80">{item.name}</span>
+                                                <span className="text-xs font-bold truncate max-w-[120px] text-black dark:text-white/80">{item.name}</span>
                                             </div>
                                             <div className="text-right">
-                                                <div className="text-[10px] font-black text-emerald-500">¥{item.dailyCost.toFixed(2)} / 天</div>
-                                                <div className="text-[8px] font-bold opacity-30 uppercase tracking-tighter">Cost Ratio</div>
+                                                <div className="text-[10px] font-black text-black dark:text-emerald-500">¥{item.dailyCost.toFixed(2)} / 天</div>
+                                                <div className="text-[8px] font-bold text-black/60 dark:text-slate-400 uppercase tracking-tighter">Cost Ratio</div>
                                             </div>
                                         </div>
                                     ))}
@@ -174,19 +174,19 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                             </div>
 
                             <div>
-                                <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary/80 mb-4 ml-2">
+                                <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-black dark:text-primary/80 mb-4 ml-2">
                                     <Timer className="w-3.5 h-3.5" /> 高值待感知 (重点关注)
                                 </h3>
                                 <div className="space-y-3">
                                     {stats.highCostItems.map(item => (
-                                        <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-white/10 hover:bg-black/[0.05] transition-colors">
+                                        <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-white/80 dark:border-white/10 hover:bg-white dark:hover:bg-black/[0.05] transition-colors shadow-sm">
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl">{item.icon}</span>
-                                                <span className="text-xs font-bold truncate max-w-[120px] text-slate-800 dark:text-white/80">{item.name}</span>
+                                                <span className="text-xs font-bold truncate max-w-[120px] text-black dark:text-white/80">{item.name}</span>
                                             </div>
                                             <div className="text-right">
-                                                <div className="text-[10px] font-black text-primary">¥{item.dailyCost.toFixed(2)} / 天</div>
-                                                <div className="text-[8px] font-bold opacity-30 uppercase tracking-tighter">Focus Index</div>
+                                                <div className="text-[10px] font-black text-black dark:text-primary">¥{item.dailyCost.toFixed(2)} / 天</div>
+                                                <div className="text-[8px] font-bold text-black/60 dark:text-slate-400 uppercase tracking-tighter">Focus Index</div>
                                             </div>
                                         </div>
                                     ))}
@@ -201,8 +201,8 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
                                 <PieChart className="w-4 h-4" />
                             </div>
-                            <p className="text-[10px] font-bold text-primary/80 leading-relaxed">
-                                <span className="font-black mr-2 uppercase">Insight:</span>
+                            <p className="text-[10px] font-bold text-black dark:text-primary/80 leading-relaxed">
+                                <span className="font-black mr-2 uppercase text-black dark:text-white">Insight:</span>
                                 统计数据将实时反应您的消费效率。多使用高效能项目，持续提升您的整体感知价值。
                             </p>
                         </div>

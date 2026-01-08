@@ -25,6 +25,12 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
         setMounted(true);
     }, []);
 
+    useEffect(() => {
+        if (isOpen) {
+            setShowChangelog(false);
+        }
+    }, [isOpen]);
+
     if (!mounted) return null;
 
     const themes = [
@@ -109,12 +115,18 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
                                 </div>
                                 <div className={cn(
                                     "w-12 h-6 rounded-full p-1 transition-colors relative",
-                                    enableStatsClick ? "bg-primary" : "bg-black/10 dark:bg-white/10"
+                                    enableStatsClick ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-black/10 dark:bg-white/10"
                                 )}>
+                                    <span className={cn(
+                                        "absolute inset-0 flex items-center justify-center text-[8px] font-bold pointer-events-none transition-all duration-300",
+                                        enableStatsClick ? "text-white pr-4 opacity-100" : "text-muted-foreground pl-4 opacity-60"
+                                    )}>
+                                        {enableStatsClick ? "ON" : "OFF"}
+                                    </span>
                                     <motion.div
                                         animate={{ x: enableStatsClick ? 24 : 0 }}
                                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                        className="w-4 h-4 bg-white rounded-full shadow-sm"
+                                        className="w-4 h-4 bg-white rounded-full shadow-sm z-10"
                                     />
                                 </div>
                             </div>

@@ -6,6 +6,14 @@ export interface ChangelogItem {
 
 export const CHANGELOG: ChangelogItem[] = [
     {
+        version: "v1.98.1",
+        date: "2026-01-09",
+        changes: [
+            "UI 视觉校准：浅色模式下全面加深统计看板文字，确保极致清晰",
+            "交互直觉增强：优化设置开关样式，增加高亮状态与状态标识"
+        ]
+    },
+    {
         version: "v1.98.0",
         date: "2026-01-09",
         changes: [
