@@ -45,7 +45,7 @@ export function FilterBar({ sortBy, setSortBy, sortOrder, setSortOrder, onToggle
                             onClick={() => {
                                 if (sortBy !== s.id) {
                                     setSortBy(s.id as any);
-                                    setSortOrder('desc'); // Reset to desc when changing sort by
+                                    // Removed automatic reset to 'desc'
                                 }
                             }}
                             className={cn(
