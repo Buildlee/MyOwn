@@ -19,18 +19,19 @@ export function useItems() {
                     usageCount: 450,
                     costType: 'daily',
                     status: 'using',
-                    category: '💻',
-                    icon: '💻'
+                    category: '科技',
+                    icon: '💻',
+                    isPinned: true
                 },
                 {
                     id: '2',
                     name: 'Sony A7C',
                     price: 10200,
                     purchaseDate: new Date(Date.now() - 120 * 86400000).toISOString(),
-                    usageCount: 120,
+                    usageCount: 12,
                     costType: 'per_use',
-                    status: 'using',
-                    category: '📸',
+                    status: 'sold',
+                    category: '科技',
                     icon: '📸'
                 }
             ];

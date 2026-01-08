@@ -140,14 +140,14 @@ export function CustomDatePicker({ value, onChange }: Props) {
                 ref={triggerRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "flex items-center justify-between bg-white/50 dark:bg-black/40 border border-white/20 dark:border-white/10 rounded-[1.4rem] px-5 py-4 cursor-pointer group hover:bg-white/60 dark:hover:bg-black/50 transition-all font-bold text-lg text-foreground",
+                    "flex items-center justify-between bg-black/[0.015] dark:bg-white/[0.03] border border-black/[0.03] dark:border-white/10 rounded-[0.9rem] px-4 py-2.5 cursor-pointer group hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition-all font-bold text-sm text-foreground shadow-inner",
                     isOpen && "ring-2 ring-primary/20"
                 )}
             >
                 <span className={cn(value ? "opacity-100 font-mono tracking-wider" : "opacity-40")}>
                     {formatDisplayDate(value)}
                 </span>
-                <CalendarIcon className={cn("w-4 h-4 transition-all", isOpen ? "text-primary opacity-100" : "opacity-30 group-hover:opacity-60")} />
+                <CalendarIcon className={cn("w-3.5 h-3.5 transition-all", isOpen ? "text-primary opacity-100" : "opacity-30 group-hover:opacity-60")} />
             </div>
 
             {/* Portal Overlay */}
@@ -155,7 +155,7 @@ export function CustomDatePicker({ value, onChange }: Props) {
                 {isOpen && (
                     <>
                         <div
-                            className="fixed inset-0 z-[9998] bg-transparent"
+                            className="fixed inset-0 z-[9998] bg-black/5 dark:bg-black/20 backdrop-blur-[2px]"
                             onClick={() => setIsOpen(false)}
                         />
                         {createPortal(
@@ -174,7 +174,7 @@ export function CustomDatePicker({ value, onChange }: Props) {
                                 className="overflow-hidden"
                             >
                                 <div
-                                    className="bg-background/80 dark:bg-[#1a1b26]/90 backdrop-blur-3xl rounded-[1.6rem] p-5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] border border-white/20 dark:border-white/10 ring-1 ring-black/5"
+                                    className="liquid-glass p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] rounded-[1.8rem] bg-white/98 dark:bg-[#0a0a0c]/98 backdrop-blur-2xl border border-white/20 dark:border-white/10"
                                 >
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-4 px-1">
@@ -261,13 +261,21 @@ export function CustomDatePicker({ value, onChange }: Props) {
                                                                 type="button"
                                                                 onClick={() => handleSelectDate(day)}
                                                                 className={cn(
-                                                                    "aspect-square rounded-xl text-xs font-bold flex items-center justify-center transition-all",
+                                                                    "aspect-square rounded-xl text-xs font-black flex flex-col items-center justify-center transition-all relative overflow-hidden",
                                                                     isSelected
-                                                                        ? "bg-primary text-white shadow-lg shadow-primary/30 scale-105"
+                                                                        ? "bg-white dark:bg-slate-100 text-[#0f172a] shadow-[0_8px_20px_rgba(0,0,0,0.12)] scale-110 ring-2 ring-primary/40 border border-black/5"
                                                                         : "hover:bg-black/5 dark:hover:bg-white/10"
                                                                 )}
                                                             >
-                                                                {day}
+                                                                <span className="relative z-10">{day}</span>
+                                                                {isSelected && (
+                                                                    <motion.div
+                                                                        layoutId="active-dot"
+                                                                        className="w-1.5 h-1 bg-primary rounded-full mt-0.5"
+                                                                        initial={{ opacity: 0, scale: 0 }}
+                                                                        animate={{ opacity: 1, scale: 1 }}
+                                                                    />
+                                                                )}
                                                             </motion.button>
                                                         );
                                                     })}
@@ -297,7 +305,7 @@ export function CustomDatePicker({ value, onChange }: Props) {
                                         )}
 
                                         {viewMode === 'year' && (
-                                            <div className="grid grid-cols-4 gap-2 h-full content-center pt-2">
+                                            <div className="grid grid-cols-3 gap-3 h-full content-center py-2">
                                                 {years.map(year => (
                                                     <motion.button
                                                         key={year}
@@ -305,7 +313,7 @@ export function CustomDatePicker({ value, onChange }: Props) {
                                                         type="button"
                                                         onClick={() => handleSelectYear(year)}
                                                         className={cn(
-                                                            "py-3 rounded-xl text-xs font-bold transition-all border border-transparent",
+                                                            "py-4 rounded-xl text-sm font-bold transition-all border border-transparent",
                                                             year === currentYear
                                                                 ? "bg-primary/10 text-primary border-primary/20 scale-105"
                                                                 : "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10"

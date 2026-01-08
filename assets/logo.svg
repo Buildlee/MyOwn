@@ -1,0 +1,66 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 背景渐变：理性与科技的结合 -->
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" /> <!-- 现代蓝 -->
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" /> <!-- 紫色 -->
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" /> <!-- 粉色 -->
+    </linearGradient>
+    
+    <!-- 玻璃光泽渐变 -->
+    <linearGradient id="glass-shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6" />
+      <stop offset="45%" style="stop-color:#ffffff;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+    </linearGradient>
+    
+    <!-- 投影 -->
+    <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="15"/>
+      <feOffset dx="0" dy="10" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 1. 背景容器 -->
+  <rect x="0" y="0" width="512" height="512" rx="120" ry="120" fill="url(#bg-gradient)" />
+
+  <!-- 2. 抽象图形：象征花费的圆形被切分，寓意"日均成本" -->
+  <g transform="translate(256, 256) scale(0.8)">
+     <!-- 底部圆环 -->
+     <circle cx="0" cy="0" r="140" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="40" />
+     <!-- 分割线/指针 -->
+     <rect x="-20" y="-160" width="40" height="160" rx="20" fill="rgba(255,255,255,0.5)" transform="rotate(45)" />
+  </g>
+
+  <!-- 3. 前景：液态玻璃 M (MyOwn) -->
+  <g filter="url(#drop-shadow)">
+    <!-- 玻璃 M 字 -->
+    <path d="M156 356 V 200 L 256 300 L 356 200 V 356" 
+          fill="none" 
+          stroke="url(#glass-shine)" 
+          stroke-width="50" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+          style="mix-blend-mode: overlay;" />
+          
+    <!-- M 字的高光描边，增强立体感 -->
+    <path d="M156 356 V 200 L 256 300 L 356 200 V 356" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="6" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+          stroke-opacity="0.8" />
+  </g>
+  
+  <!-- 4. 整体玻璃质感反光 -->
+  <rect x="0" y="0" width="512" height="512" rx="120" ry="120" fill="url(#glass-shine)" style="mix-blend-mode: soft-light; pointer-events: none;" />
+  
+</svg>

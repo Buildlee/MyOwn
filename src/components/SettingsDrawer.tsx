@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { Drawer } from './Drawer';
-import { Moon, Sun, Monitor, Settings, History, ChevronRight, Info } from 'lucide-react';
+import { Moon, Sun, Monitor, Settings, History, ChevronRight, Info, HelpCircle, PieChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { CHANGELOG } from '@/lib/changelog';
@@ -11,9 +11,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface SettingsDrawerProps {
     isOpen: boolean;
     onClose: () => void;
+    onShowGuide?: () => void;
+    enableStatsClick: boolean;
+    onToggleStatsClick: (enabled: boolean) => void;
 }
 
-export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
+export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick, onToggleStatsClick }: SettingsDrawerProps) {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [showChangelog, setShowChangelog] = useState(false);
@@ -45,26 +48,81 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                             <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
                                 <Info className="w-3.5 h-3.5" /> 关于应用
                             </label>
-                            <button
-                                onClick={() => setShowChangelog(true)}
-                                className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
+
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => setShowChangelog(true)}
+                                    className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-violet-500/10 rounded-xl text-violet-500">
+                                            <History className="w-5 h-5" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-sm font-black">更新日志</div>
+                                            <div className="text-[10px] text-muted-foreground font-medium">查看版本演进历史</div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        onShowGuide?.();
+                                        onClose();
+                                    }}
+                                    className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                                            <HelpCircle className="w-5 h-5" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-sm font-black">使用说明</div>
+                                            <div className="text-[10px] text-muted-foreground font-medium">了解核心功能与逻辑</div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
+                                <Monitor className="w-3.5 h-3.5" /> 功能开关
+                            </label>
+                            <div
+                                onClick={() => onToggleStatsClick(!enableStatsClick)}
+                                className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all cursor-pointer group"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-violet-500/10 rounded-xl text-violet-500">
-                                        <History className="w-5 h-5" />
+                                    <div className={cn(
+                                        "p-2 rounded-xl transition-colors",
+                                        enableStatsClick ? "bg-primary/10 text-primary" : "bg-muted/10 text-muted-foreground"
+                                    )}>
+                                        <PieChart className="w-5 h-5" />
                                     </div>
                                     <div className="text-left">
-                                        <div className="text-sm font-black">更新日志</div>
-                                        <div className="text-[10px] text-muted-foreground font-medium">查看版本演进历史</div>
+                                        <div className="text-sm font-black">资产统计看板</div>
+                                        <div className="text-[10px] text-muted-foreground font-medium">点击“使用中”或“已售出”胶囊弹出</div>
                                     </div>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                            </button>
+                                <div className={cn(
+                                    "w-12 h-6 rounded-full p-1 transition-colors relative",
+                                    enableStatsClick ? "bg-primary" : "bg-black/10 dark:bg-white/10"
+                                )}>
+                                    <motion.div
+                                        animate={{ x: enableStatsClick ? 24 : 0 }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        className="w-4 h-4 bg-white rounded-full shadow-sm"
+                                    />
+                                </div>
+                            </div>
                         </section>
 
                         <section className="pt-4 text-center">
-                            <div className="text-[10px] text-muted-foreground font-black tracking-[0.3em] uppercase opacity-20">
-                                MyOwn v1.4.5 · Focus on value
+                            <div className="text-[9px] text-muted-foreground font-medium tracking-[0.35em] uppercase opacity-20 flex items-center justify-center gap-2">
+                                MyOwn v1.66.0 <span className="w-1 h-1 rounded-full bg-foreground/20" /> Focus on value
                             </div>
                         </section>
                     </motion.div>
