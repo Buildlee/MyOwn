@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, motionValue, useTransform, useAnimation } from 'framer-motion';
-import { Plus, Wallet, TrendingDown, Tag, Banknote, Trash2, Settings, AlertCircle, X, ChevronRight, Sparkles, Pin, ArrowUpDown, Clock, Sun, Moon, MoreVertical } from 'lucide-react';
+import { Plus, Wallet, TrendingDown, Tag, Banknote, Trash2, Settings, AlertCircle, X, ChevronRight, Sparkles, Pin, ArrowUpDown, Clock, Sun, Moon, MoreVertical, ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useItems } from '@/lib/hooks';
 import { Drawer } from '@/components/Drawer';
@@ -12,12 +12,11 @@ import { Item, CostType } from '@/lib/types';
 import { cn, getGradient } from '@/lib/utils';
 
 const iconCategories = {
-  '科技': ['💻', '📱', '⌚', '🎧', '🖱️', '⌨️', '🎮', '📸', '📽️', '💡', '🔋', '🔌'],
-  '居家': ['🏠', '🛋️', '🛏️', '🪑', '🛁', '🧹', '🧺', '🍳', '☕', '🍵', '🍶', '🍱'],
-  '生活': ['📦', '🎁', '🎈', '📷', '🌂', '🛠️', '⚙️', '🧪', '🧬', '🩺', '💊', '🩹'],
-  '时尚': ['🧥', '👕', '👗', '👟', '👠', '👜', '🎒', '🕶️', '💍', '💄', '🧴', '💈'],
-  '运动': ['⚽', '🏀', '🏸', '🎾', '🎿', '🥊', '🎸', '🎹', '🎨', '📚', '🎫', '🎡'],
-  '自然': ['🐱', '🐶', '🐹', '🐰', '🦊', '🐻', '🐼', '🌿', '🌵', '🌸', '🌻', '🌞']
+  '科技': ['💻', '📱', '⌚', '🎧', '🖱️', '⌨️', '🎮', '📸', '💡', '🔋', '🔌'],
+  '居家': ['🏠', '🛋️', '🛏️', '🪑', '🛁', '🧹', '🧺', '🍳', '☕', '🍱', '🧼', '🪴'],
+  '生活': ['📦', '🎁', '🌂', '🛠️', '💊', '🔑', '🖊️', '📅', '🛒', '🕶️', '🧴', '🚗', '🚲'],
+  '时尚': ['🧥', '👕', '👗', '👟', '👠', '👜', '🎒', '💍', '💄', '🧢', '⌚', '👔'],
+  '运动/爱好': ['⚽', '🏀', '🏸', '🎾', '🥊', '🎸', '🎹', '🎨', '📚', '🏊', '🚴', '🧘', '🐱', '🐶', '🌿']
 };
 
 export default function Home() {
@@ -226,50 +225,67 @@ export default function Home() {
           </div>
         </motion.section>
 
-        <div className="flex items-center justify-between px-2">
-          <div className="relative flex items-center bg-white/5 dark:bg-black/20 p-1 rounded-2xl border border-white/10">
+        <div className="flex items-center justify-between px-2 gap-3">
+          <div className="relative flex-1 flex items-center bg-white/5 dark:bg-black/20 p-1.5 rounded-[1.4rem] border border-white/10 overflow-hidden">
             <motion.div
               layoutId="sort-pill"
-              className="absolute h-[calc(100%-8px)] bg-primary rounded-xl shadow-lg shadow-primary/20"
+              className="absolute h-[calc(100%-12px)] bg-foreground rounded-[1rem] shadow-lg shadow-foreground/10"
               initial={false}
               animate={{
-                left: sortBy === 'date' ? '4px' : sortBy === 'value' ? '33.3%' : '66.6%',
+                left: sortBy === 'date' ? '6px' : sortBy === 'value' ? '33.3%' : '66.6%',
                 width: 'calc(33.3% - 4px)'
               }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
             {[
-              { id: 'date', label: '时间', icon: Clock },
-              { id: 'value', label: '总价', icon: Banknote },
-              { id: 'cost', label: '均价', icon: TrendingDown },
+              { id: 'date', label: '使用时间' },
+              { id: 'value', label: '总价值' },
+              { id: 'cost', label: '均值' },
             ].map((s) => (
               <button
                 key={s.id}
-                onClick={() => handleSortClick(s.id as any)}
+                onClick={() => {
+                  if (sortBy !== s.id) {
+                    setSortBy(s.id as any);
+                    setSortOrder('desc');
+                  }
+                }}
                 className={cn(
-                  "relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-black tracking-widest uppercase transition-colors sm:px-6",
-                  sortBy === s.id ? "text-white" : "text-muted-foreground hover:text-foreground"
+                  "relative z-10 flex-1 flex items-center justify-center px-1 py-3 text-[10px] font-black tracking-widest uppercase transition-colors whitespace-nowrap",
+                  sortBy === s.id ? "text-background" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <s.icon className="w-3 h-3 shrink-0" />
-                <span className="hidden sm:inline">{s.label}</span>
-                {sortBy === s.id && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="ml-0.5"
-                  >
-                    {sortOrder === 'desc' ? (
-                      <TrendingDown className="w-2.5 h-2.5 rotate-180" />
-                    ) : (
-                      <TrendingDown className="w-2.5 h-2.5" />
-                    )}
-                  </motion.div>
-                )}
+                {s.label}
               </button>
             ))}
           </div>
-          <ArrowUpDown className="w-4 h-4 text-muted-foreground/30" />
+
+          <button
+            onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+            className="p-3 rounded-[1.4rem] bg-white/5 dark:bg-black/20 border border-white/10 text-muted-foreground hover:text-foreground transition-all active:scale-95 hover:bg-white/10"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {sortOrder === 'desc' ? (
+                <motion.div
+                  key="desc"
+                  initial={{ opacity: 0, rotate: -45, scale: 0.5 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 45, scale: 0.5 }}
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="asc"
+                  initial={{ opacity: 0, rotate: 45, scale: 0.5 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: -45, scale: 0.5 }}
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
         </div>
 
         <div className="space-y-6">
@@ -280,7 +296,7 @@ export default function Home() {
             <div className="h-[1px] flex-1 ml-4 bg-gradient-to-r from-border to-transparent opacity-20" />
           </div>
 
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <AnimatePresence mode="popLayout">
               {usingItems.map((item, idx) => (
                 <ItemCard
@@ -304,7 +320,7 @@ export default function Home() {
               </h2>
               <div className="h-[1px] flex-1 ml-4 bg-gradient-to-r from-border to-transparent opacity-20" />
             </div>
-            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <AnimatePresence mode="popLayout">
                 {soldItems.map((item, idx) => (
                   <ItemCard
@@ -338,30 +354,30 @@ export default function Home() {
       >
         <form onSubmit={handleSubmit} className="space-y-6 pb-12">
           <div className="space-y-2">
-            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-60">物品名称</label>
+            <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1 opacity-100">物品名称</label>
             <input
-              required
               type="text"
-              placeholder="输入物品名称..."
-              className="w-full bg-black/5 dark:bg-black/20 border border-white/20 dark:border-white/10 rounded-[1.4rem] p-4.5 focus:outline-none focus:ring-2 focus:ring-primary/20 text-lg font-bold transition-all placeholder:opacity-30"
+              placeholder="如：MacBook Pro M3"
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
+              className="w-full bg-white/50 dark:bg-black/40 border border-white/20 dark:border-white/10 rounded-[1.4rem] px-5 py-4 outline-none focus:ring-2 ring-primary/20 transition-all font-bold text-lg placeholder:text-muted-foreground/50 text-foreground"
+              autoFocus
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-60">入手价值 (¥)</label>
+              <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1 opacity-100">入手价格 (CNY)</label>
               <input
                 required
                 type="number"
-                className="w-full bg-black/5 dark:bg-black/20 border border-white/20 dark:border-white/10 rounded-[1.4rem] p-4.5 focus:outline-none focus:ring-2 focus:ring-primary/20 text-lg font-bold transition-all"
+                className="w-full bg-white/50 dark:bg-black/40 border border-white/20 dark:border-white/10 rounded-[1.4rem] px-5 py-4 outline-none focus:ring-2 ring-primary/20 transition-all font-bold text-lg placeholder:text-muted-foreground/50 text-foreground"
                 value={formData.price || ''}
                 onChange={e => setFormData({ ...formData, price: Number(e.target.value) })}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-60">购买日期</label>
+              <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1 opacity-100">入手日期</label>
               <CustomDatePicker
                 value={formData.purchaseDate}
                 onChange={(val: string) => setFormData({ ...formData, purchaseDate: val })}
@@ -369,8 +385,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-40">测算维度</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1 opacity-100">计费模式</label>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { id: 'daily', label: '每日消耗' },
@@ -383,8 +399,8 @@ export default function Home() {
                   className={cn(
                     "p-4 rounded-[1.6rem] border transition-all font-black text-xs tracking-tight",
                     formData.costType === opt.id
-                      ? "bg-foreground border-foreground text-background shadow-lg scale-[1.02]"
-                      : "bg-black/[0.03] dark:bg-white/5 border-transparent text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10"
+                      ? "bg-foreground border-foreground text-background shadow-lg shadow-foreground/20 scale-[1.02]"
+                      : "bg-black/[0.08] dark:bg-white/10 border-transparent text-muted-foreground dark:text-foreground hover:bg-black/15 dark:hover:bg-white/20"
                   )}
                 >
                   {opt.label}
@@ -393,8 +409,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-40">物品状态</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1 opacity-100">物品状态</label>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { id: 'using', label: '使用中' },
@@ -407,8 +423,8 @@ export default function Home() {
                   className={cn(
                     "p-4 rounded-[1.6rem] border transition-all font-black text-xs tracking-tight",
                     formData.status === opt.id
-                      ? "bg-foreground border-foreground text-background shadow-lg scale-[1.02]"
-                      : "bg-black/[0.03] dark:bg-white/5 border-transparent text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10"
+                      ? "bg-foreground border-foreground text-background shadow-lg shadow-foreground/20 scale-[1.02]"
+                      : "bg-black/[0.08] dark:bg-white/10 border-transparent text-muted-foreground dark:text-foreground hover:bg-black/15 dark:hover:bg-white/20"
                   )}
                 >
                   {opt.label}
@@ -418,9 +434,9 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <div className="flex flex-col space-y-3">
-              <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-1 opacity-40">类别图标</label>
-              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black tracking-widest text-muted-foreground dark:text-foreground/90 uppercase ml-1">分类</label>
+              <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
                 {['全部', '科技', '居家', '生活', '时尚', '运动', '自然'].map(cat => (
                   <button
                     key={cat}
@@ -429,8 +445,8 @@ export default function Home() {
                     className={cn(
                       "text-[9px] px-5 py-2.5 rounded-full border transition-all shrink-0 font-black tracking-tighter uppercase",
                       formData.category === cat
-                        ? "bg-foreground text-background border-transparent shadow-md scale-105"
-                        : "bg-black/[0.03] dark:bg-white/5 border-transparent text-muted-foreground"
+                        ? "bg-foreground text-background border-transparent shadow-lg shadow-foreground/20 scale-105"
+                        : "bg-black/[0.08] dark:bg-white/10 border-transparent text-muted-foreground dark:text-foreground hover:bg-black/15 dark:hover:bg-white/20"
                     )}
                   >
                     {cat}
@@ -637,52 +653,56 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
           }
         }}
         className={cn(
-          "relative glass-modern p-6 h-full flex flex-col justify-between hover:bg-white/30 dark:hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer min-h-[160px] border-white/30 dark:border-white/5 rounded-[1.4rem]",
+          "relative glass-modern px-4 py-3.5 h-full flex flex-col justify-center hover:bg-white/30 dark:hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer min-h-[85px] border-white/30 dark:border-white/5 rounded-[1.6rem]",
           isSold && "grayscale-[0.8] opacity-60",
           isPinned && "ring-2 ring-primary/20 bg-primary/5 shadow-lg shadow-primary/10"
         )}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex gap-4 items-center min-w-0">
-            <div className="w-12 h-12 bg-white/40 dark:bg-white/5 rounded-xl flex items-center justify-center relative overflow-hidden shrink-0 shadow-sm border border-white/40 dark:border-white/10">
-              <div className={cn(
-                "absolute inset-0 bg-gradient-to-tr opacity-10 transition-opacity",
-                gradient
-              )} />
-              <span className="text-2xl z-10 drop-shadow-sm">{item.icon || '📦'}</span>
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-lg leading-tight truncate text-foreground/90 tracking-tight">{item.name}</h3>
-                {isPinned && <Pin className="w-3 h-3 text-primary fill-primary opacity-60" />}
-              </div>
-              <div className="text-[10px] font-bold text-muted-foreground/60 mt-0.5 flex items-center tracking-wide">
-                入手 · <span className="text-foreground/70 font-bold ml-0.5">¥{item.price.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-          {isSold && (
-            <div className="bg-black/5 text-[8px] px-2 py-1 rounded-md font-black tracking-widest uppercase border border-black/5 opacity-50">
-              SOLD
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-between items-end mt-4">
-          <div className="text-[10px] text-muted-foreground/60 font-bold bg-white/20 dark:bg-black/10 px-3 py-1.5 rounded-full border border-white/20 dark:border-white/5">
-            {usageDetail}
-          </div>
-          <div className="flex flex-col items-end">
-            <div className="text-[8px] uppercase tracking-widest text-muted-foreground/40 font-black mb-0.5">
-              感知价值
-            </div>
+        {/* Main Horizontal Row: Icon | Name | Usage | Value */}
+        <div className="flex items-center gap-3 w-full">
+          {/* Icon */}
+          <div className="w-10 h-10 bg-white/40 dark:bg-white/5 rounded-[1.2rem] flex items-center justify-center relative overflow-hidden shrink-0 shadow-sm border border-white/40 dark:border-white/10">
             <div className={cn(
-              "text-3xl font-black leading-none tracking-tighter",
-              isSold ? "text-muted-foreground/40" : "text-primary dark:text-primary-foreground/80"
-            )}>
-              <span className="text-sm font-medium mr-0.5 opacity-40 italic">¥</span>
-              {costValue.toFixed(1)}
-              <span className="text-[10px] opacity-40 font-bold ml-0.5">/{item.costType === 'daily' ? 'd' : 'u'}</span>
+              "absolute inset-0 bg-gradient-to-tr opacity-10 transition-opacity",
+              gradient
+            )} />
+            <span className="text-lg z-10 drop-shadow-sm">{item.icon || '📦'}</span>
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+            {/* Top Line: Name + Usage + Value */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <h3 className="font-bold text-[15px] leading-none truncate text-foreground/90 tracking-tight">{item.name}</h3>
+                {isPinned && <Pin className="w-3 h-3 text-primary fill-primary opacity-60 shrink-0" />}
+                {/* Usage Badge Inline */}
+                <span className="px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-[9px] font-bold text-muted-foreground whitespace-nowrap hidden sm:inline-block">
+                  {usageDetail}
+                </span>
+              </div>
+
+              {/* Value - Highlighted & Big */}
+              <div className={cn(
+                "text-xl font-black leading-none tracking-tighter flex items-center shrink-0",
+                isSold ? "text-muted-foreground/50" : "text-primary dark:text-primary-foreground"
+              )}>
+                <span className="text-[10px] font-bold mr-0.5 opacity-50">¥</span>
+                {costValue.toFixed(1)}
+                <span className="text-[9px] font-bold ml-0.5 opacity-60">/{item.costType === 'daily' ? '天' : '次'}</span>
+              </div>
+            </div>
+
+            {/* Sub Line: Price + Usage(Mobile) + Label */}
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground/60 font-medium tracking-wide">
+              <div className="flex items-center gap-2">
+                <span>¥{item.price.toLocaleString()}</span>
+                <span className="sm:hidden">• {usageDetail}</span>
+                {isSold && <span className="font-black uppercase text-[8px] tracking-wider opacity-70">SOLD</span>}
+              </div>
+              <div className="scale-90 origin-right opacity-70">
+                感知价值
+              </div>
             </div>
           </div>
         </div>
