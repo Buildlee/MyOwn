@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence, motionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, motionValue, useTransform, useAnimation } from 'framer-motion';
 import { Plus, Wallet, TrendingDown, Tag, Banknote, Trash2, Settings, AlertCircle, X, ChevronRight, Sparkles, Pin, ArrowUpDown, Clock, Sun, Moon, MoreVertical } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useItems } from '@/lib/hooks';
@@ -25,6 +25,7 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'value' | 'cost'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -33,6 +34,15 @@ export default function Home() {
 
   // Avoid hydration mismatch
   useEffect(() => setMounted(true), []);
+
+  const handleSortClick = (id: 'date' | 'value' | 'cost') => {
+    if (sortBy === id) {
+      setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortBy(id);
+      setSortOrder('desc');
+    }
+  };
 
   // Form State
   const [formData, setFormData] = useState<Omit<Item, 'id'>>({
@@ -87,23 +97,33 @@ export default function Home() {
   };
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a, b) => {
+    const list = [...items].sort((a, b) => {
       // 1. Pinned items first
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
 
       // 2. Secondary sort by sortBy state
-      if (sortBy === 'value') return b.price - a.price;
-      if (sortBy === 'cost') {
+      let comparison = 0;
+      if (sortBy === 'value') {
+        comparison = (b.price || 0) - (a.price || 0);
+      } else if (sortBy === 'cost') {
         const getCost = (item: Item) => {
-          const days = Math.max(1, Math.floor((Date.now() - new Date(item.purchaseDate).getTime()) / 86400000));
-          return item.costType === 'daily' ? (item.price / days) : (item.price / Math.max(1, item.usageCount));
+          const days = Math.max(1, Math.floor((Date.now() - new Date(item.purchaseDate || Date.now()).getTime()) / 86400000));
+          const val = item.costType === 'daily' ? (item.price / days) : (item.price / Math.max(1, item.usageCount));
+          return isFinite(val) ? val : 0;
         };
-        return getCost(b) - getCost(a);
+        comparison = getCost(b) - getCost(a);
+      } else {
+        const dateA = new Date(a.purchaseDate || 0).getTime();
+        const dateB = new Date(b.purchaseDate || 0).getTime();
+        comparison = (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
       }
-      return new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime();
+
+      // 如果比较结果为 0，保持原有顺序
+      return sortOrder === 'desc' ? comparison : -comparison;
     });
-  }, [items, sortBy]);
+    return list;
+  }, [items, sortBy, sortOrder]);
 
   const usingItems = sortedItems.filter(i => i.status === 'using');
   const soldItems = sortedItems.filter(i => i.status === 'sold');
@@ -128,7 +148,6 @@ export default function Home() {
             <motion.button
               whileTap={{ scale: 0.9, rotate: 15 }}
               onClick={() => {
-                if (isTransitioning) return;
                 const nextTheme = theme === 'dark' ? 'light' : 'dark';
 
                 if (!(document as any).startViewTransition) {
@@ -136,11 +155,8 @@ export default function Home() {
                   return;
                 }
 
-                setIsTransitioning(true);
                 (document as any).startViewTransition(() => {
                   setTheme(nextTheme);
-                }).finished.finally(() => {
-                  setIsTransitioning(false);
                 });
               }}
               className="p-2.5 text-muted-foreground hover:text-foreground transition-colors rounded-full bg-white/5 border border-white/10"
@@ -229,14 +245,27 @@ export default function Home() {
             ].map((s) => (
               <button
                 key={s.id}
-                onClick={() => setSortBy(s.id as any)}
+                onClick={() => handleSortClick(s.id as any)}
                 className={cn(
-                  "relative z-10 flex items-center justify-center gap-1.5 px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors sm:px-6",
+                  "relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-black tracking-widest uppercase transition-colors sm:px-6",
                   sortBy === s.id ? "text-white" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <s.icon className="w-3 h-3" />
+                <s.icon className="w-3 h-3 shrink-0" />
                 <span className="hidden sm:inline">{s.label}</span>
+                {sortBy === s.id && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="ml-0.5"
+                  >
+                    {sortOrder === 'desc' ? (
+                      <TrendingDown className="w-2.5 h-2.5 rotate-180" />
+                    ) : (
+                      <TrendingDown className="w-2.5 h-2.5" />
+                    )}
+                  </motion.div>
+                )}
               </button>
             ))}
           </div>
@@ -251,18 +280,20 @@ export default function Home() {
             <div className="h-[1px] flex-1 ml-4 bg-gradient-to-r from-border to-transparent opacity-20" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {usingItems.map((item, idx) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                delay={idx * 0.05}
-                onClick={() => handleOpenEdit(item)}
-                onDelete={() => setConfirmDeleteId(item.id)}
-                onPin={() => togglePin(item.id)}
-              />
-            ))}
-          </div>
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <AnimatePresence mode="popLayout">
+              {usingItems.map((item, idx) => (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  delay={idx * 0.05}
+                  onClick={() => handleOpenEdit(item)}
+                  onDelete={() => setConfirmDeleteId(item.id)}
+                  onPin={() => togglePin(item.id)}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
 
         {soldItems.length > 0 && (
@@ -273,18 +304,20 @@ export default function Home() {
               </h2>
               <div className="h-[1px] flex-1 ml-4 bg-gradient-to-r from-border to-transparent opacity-20" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {soldItems.map((item, idx) => (
-                <ItemCard
-                  key={item.id}
-                  item={item}
-                  delay={idx * 0.05}
-                  onClick={() => handleOpenEdit(item)}
-                  onDelete={() => setConfirmDeleteId(item.id)}
-                  onPin={() => togglePin(item.id)}
-                />
-              ))}
-            </div>
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <AnimatePresence mode="popLayout">
+                {soldItems.map((item, idx) => (
+                  <ItemCard
+                    key={item.id}
+                    item={item}
+                    delay={idx * 0.05}
+                    onClick={() => handleOpenEdit(item)}
+                    onDelete={() => setConfirmDeleteId(item.id)}
+                    onPin={() => togglePin(item.id)}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
         )}
       </div>
@@ -499,6 +532,7 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
   const gradient = getGradient(item.name);
   const isSold = item.status === 'sold';
   const isPinned = item.isPinned;
+  const controls = useAnimation();
 
   const x = motionValue(0);
 
@@ -518,12 +552,18 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
     ? (isSold ? `曾使用 ${days} 天` : `已使用 ${days} 天`)
     : (isSold ? `共使用 ${item.usageCount} 次` : `已使用 ${item.usageCount} 次`);
 
+  const resetPosition = () => controls.start({ x: 0 });
+
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay }}
+      transition={{
+        delay,
+        layout: { type: "spring", stiffness: 500, damping: 50 }
+      }}
       className="relative overflow-hidden rounded-[1.6rem] group"
     >
       {/* Left Overlay - Pin Action */}
@@ -531,6 +571,10 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
         <motion.div
           style={{ width: pinWidth, opacity: pinOpacity }}
           className="bg-violet-500 rounded-l-[1.6rem] rounded-r-[1.6rem] flex items-center justify-center overflow-hidden"
+          onClick={() => {
+            onPin();
+            resetPosition();
+          }}
         >
           <motion.div
             style={{ scale: pinScale }}
@@ -540,7 +584,7 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
               <Pin className={cn("w-6 h-6 text-white", isPinned && "fill-white")} />
             </div>
             <span className="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-md">
-              {isPinned ? "Unpin" : "Pin"}
+              {isPinned ? "取消置顶" : "置顶项目"}
             </span>
           </motion.div>
         </motion.div>
@@ -551,6 +595,10 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
         <motion.div
           style={{ width: deleteWidth, opacity: deleteOpacity }}
           className="bg-rose-400 rounded-l-[1.6rem] rounded-r-[1.6rem] flex items-center justify-center overflow-hidden"
+          onClick={() => {
+            onDelete();
+            resetPosition();
+          }}
         >
           <motion.div
             style={{ scale: deleteScale }}
@@ -559,29 +607,39 @@ function ItemCard({ item, delay, onClick, onDelete, onPin }: any) {
             <div className="p-3 bg-white/20 rounded-full backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.3)]">
               <Trash2 className="text-white w-6 h-6 fill-white/10" />
             </div>
-            <span className="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-md">Delete</span>
+            <span className="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-md">确认删除</span>
           </motion.div>
         </motion.div>
       </div>
 
       <motion.div
+        animate={controls}
         style={{ x }}
         drag="x"
         dragConstraints={{ left: -140, right: 140 }}
         dragElastic={0.15}
         dragTransition={{ bounceStiffness: 600, bounceDamping: 25 }}
-        onDragEnd={(_, info) => {
-          if (info.offset.x < -90) {
-            onDelete();
-          } else if (info.offset.x > 90) {
-            onPin();
+        onDragEnd={() => {
+          const currentX = x.get();
+          if (currentX < -40) {
+            controls.start({ x: -100 });
+          } else if (currentX > 40) {
+            controls.start({ x: 100 });
+          } else {
+            resetPosition();
           }
         }}
-        onClick={onClick}
+        onClick={(e) => {
+          if (Math.abs(x.get()) > 5) {
+            resetPosition();
+          } else {
+            onClick(e);
+          }
+        }}
         className={cn(
           "relative glass-modern p-6 h-full flex flex-col justify-between hover:bg-white/30 dark:hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer min-h-[160px] border-white/30 dark:border-white/5 rounded-[1.4rem]",
           isSold && "grayscale-[0.8] opacity-60",
-          isPinned && "ring-2 ring-primary/20 bg-primary/5"
+          isPinned && "ring-2 ring-primary/20 bg-primary/5 shadow-lg shadow-primary/10"
         )}
       >
         <div className="flex justify-between items-start">
