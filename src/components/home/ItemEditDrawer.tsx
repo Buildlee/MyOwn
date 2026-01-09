@@ -45,7 +45,6 @@ export function ItemEditDrawer({
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
                             className="w-full bg-black/[0.015] dark:bg-white/[0.03] border border-black/[0.03] dark:border-white/10 rounded-[0.9rem] px-4 py-2.5 outline-none focus:ring-2 ring-primary/20 transition-all font-bold text-base placeholder:text-muted-foreground/30 text-foreground shadow-inner"
-                            autoFocus
                         />
                     </div>
 
@@ -97,14 +96,13 @@ export function ItemEditDrawer({
                             <label className="text-[9px] font-black tracking-widest text-muted-foreground/60 uppercase ml-4">计费模式</label>
                             <div className="relative grid grid-cols-2 gap-px liquid-glass p-0.5 rounded-[0.8rem] overflow-hidden border-none bg-black/[0.02] dark:bg-white/[0.06] shadow-sm">
                                 <motion.div
-                                    layoutId="costType-pill"
                                     className="absolute inset-y-0.5 bg-foreground rounded-[0.6rem] shadow-md z-0"
                                     initial={false}
                                     animate={{
                                         left: formData.costType === 'daily' ? '2px' : '50%',
                                         width: 'calc(50% - 2px)'
                                     }}
-                                    transition={{ type: "spring", bounce: 0.1, duration: 0.3 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 30 }} // Fast snappy spring
                                 />
                                 {['daily', 'per_use'].map(id => (
                                     <button
@@ -126,14 +124,13 @@ export function ItemEditDrawer({
                             <label className="text-[9px] font-black tracking-widest text-muted-foreground/60 uppercase ml-4">物品状态</label>
                             <div className="relative grid grid-cols-2 gap-px liquid-glass p-0.5 rounded-[0.8rem] overflow-hidden border-none bg-black/[0.02] dark:bg-white/[0.06] shadow-sm">
                                 <motion.div
-                                    layoutId="status-pill"
                                     className="absolute inset-y-0.5 bg-foreground rounded-[0.6rem] shadow-md z-0"
                                     initial={false}
                                     animate={{
                                         left: formData.status === 'using' ? '2px' : '50%',
                                         width: 'calc(50% - 2px)'
                                     }}
-                                    transition={{ type: "spring", bounce: 0.1, duration: 0.3 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 30 }} // Fast snappy spring
                                 />
                                 {['using', 'sold'].map(id => (
                                     <button

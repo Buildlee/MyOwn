@@ -39,10 +39,10 @@ export function Drawer({ isOpen, onClose, children, title }: DrawerProps) {
                         initial={{ y: '100%' }}
                         animate={{ y: 0 }}
                         exit={{ y: '100%' }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 300, mass: 0.8 }}
                         className="fixed inset-x-0 bottom-0 z-[310] liquid-glass rounded-t-[2.2rem] max-h-[90vh] overflow-y-auto pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
                     >
-                        <div className="sticky top-0 z-30 bg-white/40 dark:bg-black/20 backdrop-blur-3xl border-b border-black/[0.03] dark:border-white/5 rounded-t-[inherit]">
+                        <div className="sticky top-0 z-30 bg-white/40 dark:bg-black/20 backdrop-blur-xl border-b border-black/[0.03] dark:border-white/5 rounded-t-[inherit]">
                             <div className="px-6 py-5 flex justify-between items-center">
                                 <h2 className="text-xl font-black tracking-tighter text-foreground/80 lowercase">{title}</h2>
                                 <button

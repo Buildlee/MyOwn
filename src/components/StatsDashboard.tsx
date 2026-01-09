@@ -75,12 +75,14 @@ export function StatsDashboard({ isOpen, onClose, items, status }: StatsDashboar
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[300] bg-black/10 dark:bg-black/60 backdrop-blur-3xl flex items-center justify-center p-4 sm:p-8"
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-[300] bg-black/10 dark:bg-black/60 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
             >
                 <motion.div
-                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    initial={{ scale: 0.96, opacity: 0, y: 15 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    exit={{ scale: 0.96, opacity: 0, y: 15 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300, mass: 0.8 }}
                     className="w-full max-w-4xl max-h-[90vh] liquid-glass dark:bg-[#0a0a0c]/98 border border-white/40 dark:border-white/5 rounded-[2.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative"
                 >
                     {/* Header */}

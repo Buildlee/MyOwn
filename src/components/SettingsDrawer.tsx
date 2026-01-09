@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { Drawer } from './Drawer';
-import { Moon, Sun, Monitor, Settings, History, ChevronRight, Info, HelpCircle, PieChart } from 'lucide-react';
+import { Moon, Sun, Monitor, Settings, History, ChevronRight, Info, HelpCircle, PieChart, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { CHANGELOG } from '@/lib/changelog';
@@ -18,8 +18,8 @@ interface SettingsDrawerProps {
 
 export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick, onToggleStatsClick }: SettingsDrawerProps) {
     const { theme, setTheme } = useTheme();
+    const [currentView, setCurrentView] = useState<'menu' | 'changelog' | 'thanks'>('menu');
     const [mounted, setMounted] = useState(false);
-    const [showChangelog, setShowChangelog] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -27,7 +27,7 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
 
     useEffect(() => {
         if (isOpen) {
-            setShowChangelog(false);
+            setCurrentView('menu');
         }
     }, [isOpen]);
 
@@ -39,15 +39,23 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
         { id: 'system', name: '系统', icon: Monitor },
     ];
 
+    const getTitle = () => {
+        switch (currentView) {
+            case 'changelog': return "更新日志";
+            case 'thanks': return "特别鸣谢";
+            default: return "应用设置";
+        }
+    };
+
     return (
-        <Drawer isOpen={isOpen} onClose={onClose} title={showChangelog ? "更新日志" : "应用设置"}>
+        <Drawer isOpen={isOpen} onClose={onClose} title={getTitle()}>
             <AnimatePresence mode="wait">
-                {!showChangelog ? (
+                {currentView === 'menu' && (
                     <motion.div
-                        key="settings"
-                        initial={{ opacity: 0, x: -10 }}
+                        key="menu"
+                        initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
+                        exit={{ opacity: 0, x: -20 }}
                         className="space-y-8"
                     >
                         <section className="space-y-4">
@@ -57,7 +65,7 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
 
                             <div className="space-y-3">
                                 <button
-                                    onClick={() => setShowChangelog(true)}
+                                    onClick={() => setCurrentView('changelog')}
                                     className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
                                 >
                                     <div className="flex items-center gap-3">
@@ -132,22 +140,49 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
                             </div>
                         </section>
 
+                        <section className="space-y-4">
+                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
+                                <Heart className="w-3.5 h-3.5" /> 致谢
+                            </label>
+                            <button
+                                onClick={() => setCurrentView('thanks')}
+                                className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-gradient-to-br from-red-500/5 to-pink-500/5 border border-red-500/10 dark:border-red-500/5 hover:scale-[1.02] transition-transform duration-500 group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+                                        <Heart className="w-5 h-5 fill-current" />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="text-sm font-black flex items-center gap-1.5">
+                                            特别鸣谢 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">Acknowledgements</span>
+                                        </div>
+                                        <div className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                                            感谢所有为项目做出贡献的人
+                                        </div>
+                                    </div>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </section>
+
                         <section className="pt-4 text-center">
                             <div className="text-[9px] text-muted-foreground font-medium tracking-[0.35em] uppercase opacity-20 flex items-center justify-center gap-2">
                                 MyOwn v1.66.0 <span className="w-1 h-1 rounded-full bg-foreground/20" /> Focus on value
                             </div>
                         </section>
                     </motion.div>
-                ) : (
+                )}
+
+                {currentView === 'changelog' && (
                     <motion.div
                         key="changelog"
-                        initial={{ opacity: 0, x: 10 }}
+                        initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
+                        exit={{ opacity: 0, x: 20 }}
                         className="space-y-6"
                     >
                         <button
-                            onClick={() => setShowChangelog(false)}
+                            onClick={() => setCurrentView('menu')}
                             className="flex items-center gap-2 text-[10px] font-black text-primary hover:opacity-80 transition-opacity mb-4"
                         >
                             <ChevronRight className="w-3.5 h-3.5 rotate-180" /> 返回设置
@@ -171,6 +206,51 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
                                     </ul>
                                 </div>
                             ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                {currentView === 'thanks' && (
+                    <motion.div
+                        key="thanks"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        className="space-y-6"
+                    >
+                        <button
+                            onClick={() => setCurrentView('menu')}
+                            className="flex items-center gap-2 text-[10px] font-black text-primary hover:opacity-80 transition-opacity mb-4"
+                        >
+                            <ChevronRight className="w-3.5 h-3.5 rotate-180" /> 返回设置
+                        </button>
+
+                        <div className="space-y-4">
+                            <div className="p-6 rounded-[2rem] bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/10 flex flex-col items-center justify-center text-center space-y-3">
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center text-white shadow-xl shadow-red-500/30 text-3xl mb-1">
+                                    ❤️
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-foreground">感恩有你</h3>
+                                    <p className="text-xs text-muted-foreground mt-1 px-4 leading-relaxed">
+                                        MyOwn 的每一步成长，都离不开你们的建议与陪伴。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-2 opacity-60">测试与建议</div>
+                                {/* Contributors List */}
+                                <div className="w-full p-4 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20 shrink-0 text-lg">
+                                        🐕
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-black text-foreground">狗哥</div>
+                                        <div className="text-[10px] text-muted-foreground font-medium">首席测试官 (Chief Bug Hunter)</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 )}

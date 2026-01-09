@@ -160,10 +160,10 @@ export function CustomDatePicker({ value, onChange }: Props) {
                         />
                         {createPortal(
                             <motion.div
-                                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
+                                initial={{ opacity: 0, y: 10, scale: 0.85, filter: 'blur(8px)' }}
+                                animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                                exit={{ opacity: 0, y: 10, scale: 0.85, filter: 'blur(8px)' }}
+                                transition={{ type: "spring", damping: 25, stiffness: 300, mass: 0.8 }}
                                 style={{
                                     position: 'fixed',
                                     top: coords.top,
@@ -171,7 +171,7 @@ export function CustomDatePicker({ value, onChange }: Props) {
                                     width: coords.width,
                                     zIndex: 9999,
                                 }}
-                                className="overflow-hidden"
+                                className="overflow-invisible" // Prevent clipping shadows
                             >
                                 <div
                                     className="liquid-glass p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] rounded-[1.8rem] bg-white/98 dark:bg-[#0a0a0c]/98 backdrop-blur-2xl border border-white/20 dark:border-white/10"

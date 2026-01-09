@@ -15,8 +15,8 @@ export function StatsOverview({ summary }: StatsOverviewProps) {
         <motion.section
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 35, delay: 0.1 }}
-            className="w-full grid grid-cols-2 gap-px liquid-glass rounded-[2rem] overflow-hidden transform-gpu shadow-lg hover:shadow-2xl transition-all duration-500 group"
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="w-full grid grid-cols-2 gap-px liquid-glass rounded-[2rem] overflow-hidden transform-gpu shadow-lg hover:shadow-2xl transition-all duration-300 group backface-hidden"
         >
             <div className="bg-transparent p-5 sm:p-7 flex flex-col justify-center min-h-[100px] sm:min-h-[120px] transition-all border-r border-black/[0.03] dark:border-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
