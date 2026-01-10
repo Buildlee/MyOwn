@@ -12,6 +12,7 @@
     "apk:build": "npm run build && npx cap sync && npm run assets:generate && cd android && gradlew assembleDebug"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "clsx": "^2.1.1",
@@ -22,6 +23,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.4.0",
+    "tesseract.js": "^7.0.0",
     "three": "^0.182.0"
   },
   "devDependencies": {

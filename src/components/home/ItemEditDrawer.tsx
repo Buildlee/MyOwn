@@ -1,11 +1,14 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Camera, Loader2 } from 'lucide-react';
 import { Drawer } from '@/components/Drawer';
 import { CustomDatePicker } from '@/components/CustomDatePicker';
 import { Item } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { recognizeImage, parseItemDetails } from '@/lib/ocr';
+import { recognizeImageWithGemini } from '@/lib/gemini'; // NEW IMPORT
+import { useState, useRef } from 'react';
 
 interface ItemEditDrawerProps {
     isOpen: boolean;
@@ -14,7 +17,7 @@ interface ItemEditDrawerProps {
     formData: Omit<Item, 'id'>;
     setFormData: (data: Omit<Item, 'id'>) => void;
     onSubmit: (e: React.FormEvent) => void;
-    isCustomizingIcon?: boolean; // Optional, might not be needed if logic is internal
+    isCustomizingIcon?: boolean;
     iconCategories: Record<string, string[]>;
 }
 
@@ -27,6 +30,76 @@ export function ItemEditDrawer({
     onSubmit,
     iconCategories
 }: ItemEditDrawerProps) {
+    const [isScanning, setIsScanning] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsScanning(true);
+        try {
+            // Check for AI Key
+            const rawKey = typeof window !== 'undefined' ? localStorage.getItem('myown_gemini_api_key') : null;
+            const apiKey = rawKey ? rawKey.trim() : null;
+
+            if (apiKey) {
+                // Priority: generic AI
+                console.log('Using Gemini AI for OCR...');
+                const aiDetails = await recognizeImageWithGemini(file, apiKey);
+                setFormData({
+                    ...formData,
+                    name: aiDetails.name || formData.name,
+                    price: aiDetails.price || formData.price,
+                    purchaseDate: aiDetails.purchaseDate || formData.purchaseDate,
+                });
+            } else {
+                // Fallback: Local Tesseract
+                console.log('Using Local Tesseract for OCR...');
+                const text = await recognizeImage(file);
+                const details = parseItemDetails(text);
+
+                setFormData({
+                    ...formData,
+                    name: details.name || formData.name,
+                    price: details.price || formData.price,
+                    purchaseDate: details.purchaseDate || formData.purchaseDate,
+                });
+            }
+        } catch (error: any) {
+            if (error.message === 'QUOTA_EXCEEDED') {
+                console.warn('⚠️ Gemini AI 配额已耗尽，自动降级为本地引擎。');
+                // You might want to add a toast here
+            } else {
+                console.error('OCR Error:', error);
+            }
+
+            // Fallback logic starts here
+            // If AI failed (for any reason including quota), fallback to Tesseract
+            // Ideally we should fallback to Tesseract here if it was an AI error, 
+            // but let's keep it simple for v1.
+
+            // Try fallback if AI failed
+            if (typeof window !== 'undefined' && localStorage.getItem('myown_gemini_api_key')) {
+                console.log('AI Failed, falling back to Tesseract...');
+                try {
+                    const text = await recognizeImage(file);
+                    const details = parseItemDetails(text);
+                    setFormData({
+                        ...formData,
+                        name: details.name || formData.name,
+                        price: details.price || formData.price,
+                        purchaseDate: details.purchaseDate || formData.purchaseDate,
+                    });
+                } catch (fallbackErr) {
+                    console.error('Fallback Error:', fallbackErr);
+                }
+            }
+        } finally {
+            setIsScanning(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
 
     return (
         <Drawer
@@ -35,6 +108,26 @@ export function ItemEditDrawer({
             title={title}
         >
             <form onSubmit={onSubmit} className="space-y-3 pb-4">
+                {/* Screenshot Import */}
+                <div className="flex justify-end mb-2">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isScanning}
+                        className="flex items-center gap-1.5 text-[10px] font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors disabled:opacity-50"
+                    >
+                        {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
+                        {isScanning ? '正在识别...' : '识别截图导入'}
+                    </button>
+                </div>
+
                 {/* Main Grid: Info & Strategy mixed for density */}
                 <div className="space-y-3">
                     <div className="space-y-1">

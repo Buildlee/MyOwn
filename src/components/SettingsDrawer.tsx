@@ -142,6 +142,36 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
 
                         <section className="space-y-4">
                             <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
+                                <Settings className="w-3.5 h-3.5" /> AI 增强 (Beta)
+                            </label>
+                            <div className="w-full p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 space-y-3">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 bg-blue-500/10 rounded-xl text-blue-500">
+                                        <Settings className="w-5 h-5" />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="text-sm font-black">Gemini API Key</div>
+                                        <div className="text-[10px] text-muted-foreground font-medium">填入 Key 以启用高精度 AI 识别 (推荐 Gemini Flash)</div>
+                                    </div>
+                                </div>
+                                <input
+                                    type="password"
+                                    placeholder="sk-..."
+                                    className="w-full bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        localStorage.setItem('myown_gemini_api_key', val);
+                                    }}
+                                    defaultValue={typeof window !== 'undefined' ? localStorage.getItem('myown_gemini_api_key') || '' : ''}
+                                />
+                                <div className="text-[9px] text-muted-foreground/60 px-1">
+                                    * Key 仅存储在本地浏览器，不会上传至服务器。
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
                                 <Heart className="w-3.5 h-3.5" /> 致谢
                             </label>
                             <button

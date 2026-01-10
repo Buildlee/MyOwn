@@ -66,12 +66,15 @@ export function useItems() {
     };
 
     const summary: SummaryData = items.reduce((acc, item) => {
-        acc.totalValue += item.price;
+        // Only count active items in the asset overview
+        if (item.status === 'using') {
+            acc.totalValue += item.price;
 
-        const days = Math.max(1, Math.floor((Date.now() - new Date(item.purchaseDate).getTime()) / 86400000));
+            const days = Math.max(1, Math.floor((Date.now() - new Date(item.purchaseDate).getTime()) / 86400000));
 
-        if (item.costType === 'daily') {
-            acc.dailyCost += item.price / days;
+            if (item.costType === 'daily') {
+                acc.dailyCost += item.price / days;
+            }
         }
 
         return acc;
