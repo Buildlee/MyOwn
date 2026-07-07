@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Layers, BarChart3, History, MousePointer2 } from 'lucide-react';
+import { DollarSign, Layers, BarChart3, RefreshCw, Sparkles } from 'lucide-react';
 
 interface WelcomeGuideProps {
     showGuide: boolean;
@@ -9,117 +9,43 @@ interface WelcomeGuideProps {
 }
 
 export function WelcomeGuide({ showGuide, onComplete }: WelcomeGuideProps) {
+    const features = [
+        { icon: DollarSign, title: '感知价值核心', desc: '每件物品按天或按次计算真实成本' },
+        { icon: Layers, title: '手势交互', desc: '左滑置顶，右滑删除' },
+        { icon: BarChart3, title: '资产洞察', desc: '分类统计，高效能分析' },
+        { icon: RefreshCw, title: '生命周期', desc: '从购入到售出的完整追踪' },
+        { icon: Sparkles, title: 'AI 录入', desc: '拍照识别小票，自动填入信息' },
+    ];
+
     return (
         <AnimatePresence>
             {showGuide && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-background/60 backdrop-blur-2xl transform-gpu"
-                        onClick={onComplete}
-                    />
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        className="relative w-full max-w-sm liquid-glass p-5 sm:p-7 rounded-[2.2rem] shadow-2xl border-none overflow-hidden transform-gpu"
-                    >
-                        {/* Decorative elements */}
-                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl" />
-                        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
-
-                        <div className="relative z-10 space-y-6">
-                            <div className="w-14 h-14 bg-primary/10 rounded-[1.4rem] flex items-center justify-center mx-auto shadow-inner border border-primary/20">
-                                <Sparkles className="w-7 h-7 text-primary" />
-                            </div>
-
-                            <div className="text-center space-y-2">
-                                <h2 className="text-xl font-black tracking-tight text-foreground">欢迎开启 MyOwn</h2>
-                                <p className="text-muted-foreground/80 text-[11px] font-bold leading-relaxed">
-                                    在这里，我们重新定义物品的价值。<br />
-                                    不再只是冷冰冰的支出，而是真实的感知。
-                                </p>
-                            </div>
-
-                            <motion.div
-                                initial="hidden"
-                                animate="visible"
-                                variants={{
-                                    visible: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } }
-                                }}
-                                className="space-y-3 max-h-[45vh] overflow-y-auto pr-1 no-scrollbar scroll-smooth transform-gpu"
-                            >
-                                <div className="space-y-4">
-                                    {/* Core Logic */}
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-black/[0.03] dark:bg-white/5 group border border-transparent hover:border-primary/20 transition-all">
-                                        <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                            <Sparkles className="w-4 h-4" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-black">感知价值核心</p>
-                                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">重定义物品成本：长线物品按天分摊价格，高频单品按次数折算，让每一笔消费都有迹可循。</p>
-                                        </div>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[300] backdrop flex items-center justify-center p-6">
+                    <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                        className="w-full max-w-sm bg-bg rounded-2xl p-6 shadow-xl border border-border">
+                        <h2 className="text-xl font-bold text-text mb-1">欢迎使用 MyOwn</h2>
+                        <p className="text-[13px] text-text2 mb-5">花 20 秒了解核心功能</p>
+                        <div className="space-y-2.5 mb-5">
+                            {features.map((f, i) => (
+                                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-card2">
+                                    <div className="w-7 h-7 rounded-lg bg-bg border border-border flex items-center justify-center text-text2 shrink-0 mt-0.5">
+                                        <f.icon className="w-3.5 h-3.5" />
                                     </div>
-
-                                    {/* Gestures */}
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-black/[0.03] dark:bg-white/5 group border border-transparent hover:border-violet-500/20 transition-all">
-                                        <div className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                            <Layers className="w-4 h-4" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-black">极速手势交互</p>
-                                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">👉 右滑【置顶】或【取消置顶】核心资产；👈 左滑轻松【移除】冗余记录。</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Stats Dashboard */}
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-black/[0.03] dark:bg-white/5 group border border-transparent hover:border-emerald-500/20 transition-all">
-                                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                            <BarChart3 className="w-4 h-4" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-black">资产洞察看板</p>
-                                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">点击列表分类标题可触发全屏看板，不仅有总值汇总，更有基于日均成本的资产效能深度分析。</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Status Flow */}
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-black/[0.03] dark:bg-white/5 group border border-transparent hover:border-amber-500/20 transition-all">
-                                        <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                            <History className="w-4 h-4" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-black">完整生命周期</p>
-                                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">编辑物品状态即可将其流转至“已售出”分类，记录一段物品陪伴的终点，实现资产闭环管理。</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Form efficiency */}
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-black/[0.03] dark:bg-white/5 group border border-transparent hover:border-cyan-500/20 transition-all">
-                                        <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                            <MousePointer2 className="w-4 h-4" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-black">极致录入体验</p>
-                                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">全新的零滚动高密度表单，在移动端无需滑动即可一屏完成所有资产信息的精准录入。</p>
-                                        </div>
+                                    <div>
+                                        <p className="text-[14px] font-medium text-text">{f.title}</p>
+                                        <p className="text-[12px] text-text3 mt-0.5">{f.desc}</p>
                                     </div>
                                 </div>
-                                <div className="h-2" />
-                            </motion.div>
-
-                            <button
-                                onClick={onComplete}
-                                className="w-full py-4 rounded-[1.6rem] bg-foreground text-background font-black text-base shadow-xl shadow-foreground/10 active:scale-95 transition-all"
-                            >
-                                开始探索
-                            </button>
+                            ))}
                         </div>
+                        <button onClick={onComplete}
+                            className="w-full py-3 rounded-xl bg-text text-bg font-semibold text-[15px] active:scale-95 transition-transform hover:opacity-90">
+                            开始使用
+                        </button>
                     </motion.div>
-                </div>
+                </motion.div>
             )}
         </AnimatePresence>
     );

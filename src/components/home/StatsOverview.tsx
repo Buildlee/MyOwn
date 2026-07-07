@@ -2,53 +2,50 @@
 
 import { motion } from 'framer-motion';
 import { Wallet, TrendingDown } from 'lucide-react';
+import { formatLargeNumber } from '@/lib/utils';
 
 interface StatsOverviewProps {
-    summary: {
-        totalValue: number;
-        dailyCost: number;
-    };
+    summary: { totalValue: number; dailyCost: number };
 }
 
 export function StatsOverview({ summary }: StatsOverviewProps) {
     return (
-        <motion.section
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="w-full grid grid-cols-2 gap-px liquid-glass rounded-[2rem] overflow-hidden transform-gpu shadow-lg hover:shadow-2xl transition-all duration-300 group backface-hidden"
+        <motion.div
+            initial={{ y: 12, opacity: 0.9 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-2 gap-3"
         >
-            <div className="bg-transparent p-5 sm:p-7 flex flex-col justify-center min-h-[100px] sm:min-h-[120px] transition-all border-r border-black/[0.03] dark:border-white/5 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative z-10 space-y-1">
-                    <div className="flex items-center space-x-2 text-muted-foreground/60">
-                        <Wallet className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-black tracking-[0.2em] uppercase">资产总览</span>
-                    </div>
-                    <div className="flex items-baseline space-x-1">
-                        <span className="text-sm font-bold opacity-20 italic">¥</span>
-                        <div className="text-3xl sm:text-4xl font-black tracking-tightest">
-                            {summary.totalValue.toLocaleString()}
-                        </div>
-                    </div>
+            <div className="card p-5 space-y-2.5 press">
+                <div className="flex items-center gap-2 text-text3">
+                    <Wallet className="w-[14px] h-[14px]" />
+                    <span className="text-xs font-medium tracking-wide">资产总览</span>
+                </div>
+                <div className="flex items-baseline gap-0.5">
+                    <span className="text-sm text-text3 font-medium">¥</span>
+                    <span className="text-[32px] font-bold text-text tracking-tightest leading-none">
+                        {formatLargeNumber(summary.totalValue)}
+                    </span>
                 </div>
             </div>
 
-            <div className="bg-transparent p-5 sm:p-7 flex flex-col justify-center min-h-[100px] sm:min-h-[120px] transition-all relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative z-10 space-y-1">
-                    <div className="flex items-center space-x-2 text-muted-foreground/60">
-                        <TrendingDown className="w-3.5 h-3.5 text-emerald-500/60" />
-                        <span className="text-[9px] font-black tracking-[0.2em] uppercase">日均成本</span>
-                    </div>
-                    <div className="flex items-baseline space-x-1">
-                        <span className="text-sm font-bold opacity-20 italic">¥</span>
-                        <div className="text-3xl sm:text-4xl font-black text-emerald-500/90 tracking-tightest">
-                            {summary.dailyCost.toFixed(1)}
-                        </div>
-                    </div>
+            <motion.div
+                initial={{ y: 12, opacity: 0.9 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                className="card p-5 space-y-2.5 press"
+            >
+                <div className="flex items-center gap-2 text-text3">
+                    <TrendingDown className="w-[14px] h-[14px]" />
+                    <span className="text-xs font-medium tracking-wide">日均成本</span>
                 </div>
-            </div>
-        </motion.section>
+                <div className="flex items-baseline gap-0.5">
+                    <span className="text-sm text-text3 font-medium">¥</span>
+                    <span className="text-[32px] font-bold text-text tracking-tightest leading-none">
+                        {formatLargeNumber(summary.dailyCost, 1)}
+                    </span>
+                </div>
+            </motion.div>
+        </motion.div>
     );
 }

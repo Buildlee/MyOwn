@@ -42,18 +42,12 @@ export default function Home() {
     setIsScrolled(latest > 20);
   });
 
-  // Avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
     const hasVisited = localStorage.getItem('myown_visited_v1');
-    if (!hasVisited) {
-      setShowGuide(true);
-    }
-
-    const savedStatsSetting = localStorage.getItem('myown_enable_stats_click');
-    if (savedStatsSetting !== null) {
-      setEnableStatsClick(savedStatsSetting === 'true');
-    }
+    if (!hasVisited) setShowGuide(true);
+    const saved = localStorage.getItem('myown_enable_stats_click');
+    if (saved !== null) setEnableStatsClick(saved === 'true');
   }, []);
 
   const handleToggleStatsClick = (enabled: boolean) => {
@@ -67,79 +61,43 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (showGuide || statsConfig.isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    document.body.style.overflow = (showGuide || statsConfig.isOpen) ? 'hidden' : 'unset';
+    return () => { document.body.style.overflow = 'unset'; };
   }, [showGuide, statsConfig.isOpen]);
 
-  // Form State
   const [formData, setFormData] = useState<Omit<Item, 'id'>>({
-    name: '',
-    price: 0,
+    name: '', price: 0,
     purchaseDate: new Date().toISOString().split('T')[0],
-    usageCount: 1,
-    costType: 'daily',
-    status: 'using',
-    category: '全部',
-    icon: '📦'
+    usageCount: 1, costType: 'daily',
+    status: 'using', category: '全部', icon: '📦'
   });
 
   const handleOpenAdd = () => {
     setEditingItem(null);
-    setFormData({
-      name: '',
-      price: 0,
-      purchaseDate: new Date().toISOString().split('T')[0],
-      usageCount: 1,
-      costType: 'daily',
-      status: 'using',
-      category: '全部',
-      icon: '📦'
-    });
+    setFormData({ name: '', price: 0, purchaseDate: new Date().toISOString().split('T')[0], usageCount: 1, costType: 'daily', status: 'using', category: '全部', icon: '📦' });
     setIsDrawerOpen(true);
   };
 
   const handleOpenEdit = (item: Item) => {
     setEditingItem(item);
-    setFormData({
-      name: item.name,
-      price: item.price,
-      purchaseDate: item.purchaseDate,
-      usageCount: item.usageCount,
-      costType: item.costType,
-      status: item.status,
-      category: item.category || '全部',
-      icon: item.icon || '📦'
-    });
+    setFormData({ name: item.name, price: item.price, purchaseDate: item.purchaseDate, usageCount: item.usageCount, costType: item.costType, status: item.status, category: item.category || '全部', icon: item.icon || '📦' });
     setIsDrawerOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingItem) {
-      updateItem({ ...formData, id: editingItem.id });
-    } else {
-      addItem(formData);
-    }
+    if (editingItem) updateItem({ ...formData, id: editingItem.id });
+    else addItem(formData);
     setIsDrawerOpen(false);
   };
 
   const sortedItems = useMemo(() => {
-    const list = [...items].sort((a, b) => {
-      // 1. Pinned items first
+    return [...items].sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-
-      // 2. Secondary sort by sortBy state
       let comparison = 0;
-      if (sortBy === 'value') {
-        comparison = (b.price || 0) - (a.price || 0);
-      } else if (sortBy === 'cost') {
+      if (sortBy === 'value') comparison = (b.price || 0) - (a.price || 0);
+      else if (sortBy === 'cost') {
         const getCost = (item: Item) => {
           const days = Math.max(1, Math.floor((Date.now() - new Date(item.purchaseDate || Date.now()).getTime()) / 86400000));
           const val = item.costType === 'daily' ? (item.price / days) : (item.price / Math.max(1, item.usageCount));
@@ -147,27 +105,17 @@ export default function Home() {
         };
         comparison = getCost(b) - getCost(a);
       } else {
-        const dateA = new Date(a.purchaseDate || 0).getTime();
-        const dateB = new Date(b.purchaseDate || 0).getTime();
-        // dateA - dateB => Ascending Timestamp (Oldest first)
-        // Since "Usage Time" is (Now - Date), Oldest Date = Longest Time.
-        // So this logic aligns with:
-        // desc (High -> Low): Longest Time first (Oldest Date)
-        // asc (Low -> High): Shortest Time first (Newest Date)
-        comparison = (isNaN(dateA) ? 0 : dateA) - (isNaN(dateB) ? 0 : dateB);
+        comparison = (new Date(a.purchaseDate || 0).getTime()) - (new Date(b.purchaseDate || 0).getTime());
       }
-
-      // 如果比较结果为 0，保持原有顺序
       return sortOrder === 'desc' ? comparison : -comparison;
     });
-    return list;
   }, [items, sortBy, sortOrder]);
 
   const usingItems = sortedItems.filter(i => i.status === 'using');
   const soldItems = sortedItems.filter(i => i.status === 'sold');
 
   return (
-    <main className="flex flex-col items-center pb-24 sm:pb-12 max-w-5xl mx-auto w-full min-h-screen">
+    <main className="flex flex-col items-center pb-28 sm:pb-16 max-w-5xl mx-auto w-full min-h-screen px-6 pt-2">
       <HomeHeader
         isScrolled={isScrolled}
         onOpenSettings={() => setIsSettingsOpen(true)}
@@ -183,14 +131,13 @@ export default function Home() {
         onToggleStatsClick={handleToggleStatsClick}
       />
 
-      <div className="w-full px-6 pt-1 space-y-8 sm:space-y-10">
+      <div className="w-full space-y-6 mt-6 sm:mt-8">
         <StatsOverview summary={summary} />
 
         <FilterBar
           sortBy={sortBy}
           setSortBy={setSortBy}
           sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
           onToggleOrder={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
         />
 
@@ -217,13 +164,14 @@ export default function Home() {
         />
       </div>
 
+      {/* FAB */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleOpenAdd}
-        className="sm:hidden fixed bottom-10 right-6 w-14 h-14 bg-foreground text-background rounded-full shadow-2xl flex items-center justify-center z-40 active-pulse border border-white/10"
+        className="sm:hidden fixed bottom-8 right-6 w-14 h-14 bg-accent text-white rounded-full shadow-lg flex items-center justify-center z-[50] active:scale-95 transition-transform"
       >
-        <Plus className="w-8 h-8" />
+        <Plus className="w-7 h-7" />
       </motion.button>
 
       <ItemEditDrawer
@@ -240,17 +188,11 @@ export default function Home() {
         isOpen={!!confirmDeleteId}
         onCancel={() => setConfirmDeleteId(null)}
         onConfirm={() => {
-          if (confirmDeleteId) {
-            deleteItem(confirmDeleteId);
-            setConfirmDeleteId(null);
-          }
+          if (confirmDeleteId) { deleteItem(confirmDeleteId); setConfirmDeleteId(null); }
         }}
       />
 
-      <WelcomeGuide
-        showGuide={showGuide}
-        onComplete={completeGuide}
-      />
+      <WelcomeGuide showGuide={showGuide} onComplete={completeGuide} />
 
       <StatsDashboard
         isOpen={statsConfig.isOpen}

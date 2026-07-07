@@ -1,228 +1,94 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card2: var(--card2);
+  --color-text: var(--text);
+  --color-text2: var(--text2);
+  --color-text3: var(--text3);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Geist Mono', monospace;
+  --radius: 0.75rem;
 }
 
 :root {
-  --background: #fdfdff;
-  /* Even softer lavender tint white */
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #7c3aed;
-  /* Violet 600 */
-  --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #eef2f6;
-  /* Very soft border */
-  --input: #eef2f6;
-  --ring: #7c3aed;
-  --radius: 1rem;
-  /* Slightly larger radius for softer look */
-  --glass-bg: rgba(255, 255, 255, 0.4);
-  /* More transparent for dynamic bg to shine through */
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --calendar-filter: invert(0);
-  --liquid-border: rgba(255, 255, 255, 0.8);
-  --liquid-shadow: rgba(31, 38, 135, 0.04);
-}
-
-/* Responsive Scaling for large mobile screens (e.g. S23 Ultra) */
-@media (min-width: 420px) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media (min-width: 480px) {
-  html {
-    font-size: 14px;
-  }
+  --bg: oklch(0.97 0.005 80);
+  --card: oklch(0.99 0.003 75);
+  --card2: oklch(0.95 0.005 85);
+  --text: oklch(0.08 0.005 75);
+  --text2: oklch(0.38 0.005 80);
+  --text3: oklch(0.55 0.005 85);
+  --border: oklch(0.87 0.005 80);
+  --destructive: oklch(0.55 0.18 25);
 }
 
 .dark {
-  --background: #020617;
-  /* Brighter deep slate/blue for better dark neon feel */
-  --foreground: #f8fafc;
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
-  --primary: #8b5cf6;
-  --primary-foreground: #ffffff;
-  --secondary: #334155;
-  --secondary-foreground: #f8fafc;
-  --muted: #334155;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
-  --destructive: #ef4444;
-  --destructive-foreground: #f8fafc;
-  --border: #475569;
-  /* Slate 600 - more distinct than previous 700ish */
-  --input: #1e293b;
-  --ring: #8b5cf6;
-  --glass-bg: rgba(15, 23, 42, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --calendar-filter: invert(1);
-  --liquid-border: rgba(255, 255, 255, 0.12);
-  --liquid-shadow: rgba(0, 0, 0, 0.3);
-  /* More visible border */
+  --bg: oklch(0.08 0.003 75);
+  --card: oklch(0.13 0.005 80);
+  --card2: oklch(0.11 0.005 80);
+  --text: oklch(0.93 0.003 80);
+  --text2: oklch(0.58 0.005 80);
+  --text3: oklch(0.42 0.005 80);
+  --border: oklch(0.20 0.005 80);
+  --destructive: oklch(0.65 0.18 25);
+  color-scheme: dark;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  /* Support for mobile safe areas (notches) */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  /* Optimize mobile scrolling */
-  -webkit-overflow-scrolling: touch;
-  /* Elegant theme transition engine */
-  transition:
-    background-color 1s cubic-bezier(0.4, 0, 0.2, 1),
-    color 1s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 1s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 1s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Custom scrollbar for a cleaner look */
-::-webkit-scrollbar {
-  width: 5px;
+/* Card base */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.card2 {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
+/* Separator */
+.sep { height: 1px; background: var(--border); }
 
-/* Glassmorphism utility */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-}
-
-.glass-modern {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1.2px solid var(--liquid-border);
-  box-shadow: 0 8px 32px 0 var(--liquid-shadow);
-  transition: inherit;
-}
-
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid var(--liquid-border);
-  box-shadow:
-    inset 0 0 24px rgba(255, 255, 255, 0.4),
-    0 12px 40px var(--liquid-shadow);
-  transition: inherit;
-}
-
-.dark .liquid-glass {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid var(--liquid-border);
-  box-shadow:
-    inset 0 0 20px rgba(255, 255, 255, 0.05),
-    0 8px 32px var(--liquid-shadow);
-}
-
-.glass-dark {
-  background: rgba(0, 0, 0, 0.02);
+/* Backdrop */
+.backdrop {
+  background: oklch(0 0 0 / 0.35);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: inherit;
+  -webkit-backdrop-filter: blur(10px);
 }
+.dark .backdrop { background: oklch(0 0 0 / 0.55); }
 
-.glass-light {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  transition: inherit;
-}
+/* Button press */
+.press { transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1); }
+.press:active { transform: scale(0.97); }
 
-/* No scrollbar utility */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Active state for better mobile feedback */
-.active-pulse:active {
-  transform: scale(0.96);
-  opacity: 0.8;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 0; height: 0; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance { text-wrap: balance; }
+  .tracking-tightest { letter-spacing: -0.04em; }
 }
 
-:root {
-  view-transition-name: root;
-}
-
-/* View Transition API - Diagonal Theme Toggle Animation */
-::view-transition-group(root) {
-  animation-duration: 1s;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-  display: block;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 9999;
-  animation: reveal-theme 1s cubic-bezier(0.4, 0, 0.2, 1) both;
-  clip-path: circle(0% at var(--x) var(--y));
-  will-change: clip-path;
-}
-
-@keyframes reveal-theme {
-  from {
-    clip-path: circle(0% at var(--x) var(--y));
-  }
-
-  to {
-    clip-path: circle(150% at var(--x) var(--y));
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

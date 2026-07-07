@@ -1,14 +1,13 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { Drawer } from './Drawer';
-import { Moon, Sun, Monitor, Settings, History, ChevronRight, Info, HelpCircle, PieChart, Heart } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Drawer } from '@/components/Drawer';
+import { Moon, Sun, Monitor, ChevronRight, History, HelpCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CHANGELOG } from '@/lib/changelog';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface SettingsDrawerProps {
+interface Props {
     isOpen: boolean;
     onClose: () => void;
     onShowGuide?: () => void;
@@ -16,271 +15,134 @@ interface SettingsDrawerProps {
     onToggleStatsClick: (enabled: boolean) => void;
 }
 
-export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick, onToggleStatsClick }: SettingsDrawerProps) {
+function SettingRow({ icon: Icon, label, desc, onClick }: { icon: any; label: string; desc?: string; onClick?: () => void }) {
+    return (
+        <button onClick={onClick} className="w-full flex items-center justify-between p-4 hover:bg-card2 active:bg-card transition-colors rounded-xl group">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-card2 flex items-center justify-center text-text2">
+                    <Icon className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                    <p className="text-[15px] font-medium text-text">{label}</p>
+                    {desc && <p className="text-[13px] text-text3 mt-0.5">{desc}</p>}
+                </div>
+            </div>
+            {onClick && <ChevronRight className="w-4 h-4 text-text3 group-hover:translate-x-0.5 transition-transform" />}
+        </button>
+    );
+}
+
+export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick, onToggleStatsClick }: Props) {
     const { theme, setTheme } = useTheme();
-    const [currentView, setCurrentView] = useState<'menu' | 'changelog' | 'thanks'>('menu');
+    const [view, setView] = useState<'menu' | 'changelog'>('menu');
     const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    useEffect(() => {
-        if (isOpen) {
-            setCurrentView('menu');
-        }
-    }, [isOpen]);
+    useEffect(() => { setMounted(true); }, []);
+    useEffect(() => { if (isOpen) setView('menu'); }, [isOpen]);
 
     if (!mounted) return null;
 
     const themes = [
-        { id: 'light', name: '浅色', icon: Sun },
-        { id: 'dark', name: '深色', icon: Moon },
-        { id: 'system', name: '系统', icon: Monitor },
+        { id: 'light', label: '浅色', icon: Sun },
+        { id: 'dark', label: '深色', icon: Moon },
+        { id: 'system', label: '系统', icon: Monitor },
     ];
 
-    const getTitle = () => {
-        switch (currentView) {
-            case 'changelog': return "更新日志";
-            case 'thanks': return "特别鸣谢";
-            default: return "应用设置";
-        }
-    };
-
     return (
-        <Drawer isOpen={isOpen} onClose={onClose} title={getTitle()}>
+        <Drawer isOpen={isOpen} onClose={onClose} title={view === 'menu' ? '设置' : '更新日志'}>
             <AnimatePresence mode="wait">
-                {currentView === 'menu' && (
-                    <motion.div
-                        key="menu"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-8"
-                    >
-                        <section className="space-y-4">
-                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
-                                <Info className="w-3.5 h-3.5" /> 关于应用
-                            </label>
-
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => setCurrentView('changelog')}
-                                    className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-violet-500/10 rounded-xl text-violet-500">
-                                            <History className="w-5 h-5" />
-                                        </div>
-                                        <div className="text-left">
-                                            <div className="text-sm font-black">更新日志</div>
-                                            <div className="text-[10px] text-muted-foreground font-medium">查看版本演进历史</div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        onShowGuide?.();
-                                        onClose();
-                                    }}
-                                    className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-primary/10 rounded-xl text-primary">
-                                            <HelpCircle className="w-5 h-5" />
-                                        </div>
-                                        <div className="text-left">
-                                            <div className="text-sm font-black">使用说明</div>
-                                            <div className="text-[10px] text-muted-foreground font-medium">了解核心功能与逻辑</div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                                </button>
+                {view === 'menu' && (
+                    <motion.div key="menu" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+                        {/* Theme */}
+                        <div>
+                            <p className="text-[13px] font-medium text-text3 mb-3 px-1">主题</p>
+                            <div className="flex gap-2">
+                                {themes.map(t => (
+                                    <button key={t.id} onClick={() => setTheme(t.id)}
+                                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-medium transition-all ${
+                                            theme === t.id ? 'card text-text shadow-sm' : 'bg-card2 text-text2 hover:text-text'
+                                        }`}
+                                    >
+                                        <t.icon className="w-4 h-4" />
+                                        {t.label}
+                                    </button>
+                                ))}
                             </div>
-                        </section>
+                        </div>
 
-                        <section className="space-y-4">
-                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
-                                <Monitor className="w-3.5 h-3.5" /> 功能开关
-                            </label>
-                            <div
-                                onClick={() => onToggleStatsClick(!enableStatsClick)}
-                                className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 hover:bg-black/[0.06] dark:hover:bg-white/10 transition-all cursor-pointer group"
+                        {/* Feature toggles */}
+                        <div>
+                            <p className="text-[13px] font-medium text-text3 mb-3 px-1">功能</p>
+                            <div onClick={() => onToggleStatsClick(!enableStatsClick)}
+                                className="flex items-center justify-between p-4 rounded-xl hover:bg-card2 active:bg-card transition-colors cursor-pointer"
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={cn(
-                                        "p-2 rounded-xl transition-colors",
-                                        enableStatsClick ? "bg-primary/10 text-primary" : "bg-muted/10 text-muted-foreground"
-                                    )}>
-                                        <PieChart className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="text-sm font-black">资产统计看板</div>
-                                        <div className="text-[10px] text-muted-foreground font-medium">点击“使用中”或“已售出”胶囊弹出</div>
-                                    </div>
+                                <div>
+                                    <p className="text-[15px] font-medium text-text">资产统计看板</p>
+                                    <p className="text-[13px] text-text3 mt-0.5">点击分类查看分析</p>
                                 </div>
-                                <div className={cn(
-                                    "w-12 h-6 rounded-full p-1 transition-colors relative",
-                                    enableStatsClick ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-black/10 dark:bg-white/10"
-                                )}>
-                                    <span className={cn(
-                                        "absolute inset-0 flex items-center justify-center text-[8px] font-bold pointer-events-none transition-all duration-300",
-                                        enableStatsClick ? "text-white pr-4 opacity-100" : "text-muted-foreground pl-4 opacity-60"
-                                    )}>
-                                        {enableStatsClick ? "ON" : "OFF"}
-                                    </span>
-                                    <motion.div
-                                        animate={{ x: enableStatsClick ? 24 : 0 }}
+                                <div className={`w-[42px] h-[24px] rounded-full p-[3px] transition-colors ${
+                                    enableStatsClick ? 'bg-text' : 'bg-border'
+                                }`}>
+                                    <motion.div animate={{ x: enableStatsClick ? 18 : 0 }}
                                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                        className="w-4 h-4 bg-white rounded-full shadow-sm z-10"
+                                        className="w-[18px] h-[18px] bg-bg rounded-full shadow-sm"
                                     />
                                 </div>
                             </div>
-                        </section>
+                        </div>
 
-                        <section className="space-y-4">
-                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
-                                <Settings className="w-3.5 h-3.5" /> AI 增强 (Beta)
-                            </label>
-                            <div className="w-full p-5 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 space-y-3">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="p-2 bg-blue-500/10 rounded-xl text-blue-500">
-                                        <Settings className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="text-sm font-black">Gemini API Key</div>
-                                        <div className="text-[10px] text-muted-foreground font-medium">填入 Key 以启用高精度 AI 识别 (推荐 Gemini Flash)</div>
-                                    </div>
-                                </div>
-                                <input
-                                    type="password"
-                                    placeholder="sk-..."
-                                    className="w-full bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        localStorage.setItem('myown_gemini_api_key', val);
-                                    }}
+                        {/* AI Key */}
+                        <div>
+                            <p className="text-[13px] font-medium text-text3 mb-3 px-1">AI 识别</p>
+                            <div className="p-4 rounded-xl bg-card2 space-y-2">
+                                <p className="text-[15px] font-medium text-text">Gemini API Key</p>
+                                <input type="password" placeholder="sk-..."
                                     defaultValue={typeof window !== 'undefined' ? localStorage.getItem('myown_gemini_api_key') || '' : ''}
+                                    onChange={(e) => localStorage.setItem('myown_gemini_api_key', e.target.value)}
+                                    className="w-full bg-bg border border-border rounded-lg px-4 py-2.5 text-sm text-text outline-none placeholder:text-text3/60 font-mono"
                                 />
-                                <div className="text-[9px] text-muted-foreground/60 px-1">
-                                    * Key 仅存储在本地浏览器，不会上传至服务器。
-                                </div>
+                                <p className="text-xs text-text3">Key 仅存储在本地浏览器。</p>
                             </div>
-                        </section>
+                        </div>
 
-                        <section className="space-y-4">
-                            <label className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2 ml-1">
-                                <Heart className="w-3.5 h-3.5" /> 致谢
-                            </label>
-                            <button
-                                onClick={() => setCurrentView('thanks')}
-                                className="w-full flex items-center justify-between p-5 rounded-[1.6rem] bg-gradient-to-br from-red-500/5 to-pink-500/5 border border-red-500/10 dark:border-red-500/5 hover:scale-[1.02] transition-transform duration-500 group"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-red-500/20">
-                                        <Heart className="w-5 h-5 fill-current" />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="text-sm font-black flex items-center gap-1.5">
-                                            特别鸣谢 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">Acknowledgements</span>
-                                        </div>
-                                        <div className="text-[10px] text-muted-foreground font-medium mt-0.5">
-                                            感谢所有为项目做出贡献的人
-                                        </div>
-                                    </div>
-                                </div>
-                                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </section>
-
-                        <section className="pt-4 text-center">
-                            <div className="text-[9px] text-muted-foreground font-medium tracking-[0.35em] uppercase opacity-20 flex items-center justify-center gap-2">
-                                MyOwn v1.66.0 <span className="w-1 h-1 rounded-full bg-foreground/20" /> Focus on value
+                        {/* About */}
+                        <div>
+                            <p className="text-[13px] font-medium text-text3 mb-3 px-1">关于</p>
+                            <div className="space-y-0.5">
+                                <SettingRow icon={History} label="更新日志" desc="版本演进历史" onClick={() => setView('changelog')} />
+                                <SettingRow icon={HelpCircle} label="使用说明" desc="核心功能与交互" onClick={() => { onShowGuide?.(); onClose(); }} />
                             </div>
-                        </section>
+                        </div>
+
+                        <p className="text-center text-xs text-text3/50 font-mono pt-4">MyOwn v1.66.0</p>
                     </motion.div>
                 )}
 
-                {currentView === 'changelog' && (
-                    <motion.div
-                        key="changelog"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
-                    >
-                        <button
-                            onClick={() => setCurrentView('menu')}
-                            className="flex items-center gap-2 text-[10px] font-black text-primary hover:opacity-80 transition-opacity mb-4"
+                {view === 'changelog' && (
+                    <motion.div key="changelog" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <button onClick={() => setView('menu')}
+                            className="flex items-center gap-1 text-sm font-medium text-text2 hover:text-text transition-colors mb-4"
                         >
-                            <ChevronRight className="w-3.5 h-3.5 rotate-180" /> 返回设置
+                            <ChevronRight className="w-4 h-4 rotate-180" /> 返回
                         </button>
-
-                        <div className="space-y-8 overflow-y-auto max-h-[60vh] pr-2 no-scrollbar">
-                            {CHANGELOG.map((item) => (
-                                <div key={item.version} className="relative pl-6 border-l border-primary/20 space-y-3">
-                                    <div className="absolute left-[-5px] top-0 w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
-                                    <div className="flex items-baseline justify-between">
-                                        <h4 className="text-lg font-black tracking-tight">{item.version}</h4>
-                                        <span className="text-[10px] font-mono font-bold opacity-30">{item.date}</span>
+                        <div className="space-y-5 max-h-[50vh] overflow-y-auto pr-1 no-scrollbar">
+                            {CHANGELOG.map(item => (
+                                <div key={item.version} className="relative pl-4 border-l border-border">
+                                    <div className="absolute left-[-3px] top-[6px] w-[6px] h-[6px] rounded-full bg-border" />
+                                    <div className="flex items-baseline gap-3 mb-1.5">
+                                        <h4 className="text-[15px] font-semibold text-text">{item.version}</h4>
+                                        <span className="text-[11px] text-text3 font-mono">{item.date}</span>
                                     </div>
-                                    <ul className="space-y-2">
-                                        {item.changes.map((change, i) => (
-                                            <li key={i} className="text-xs text-muted-foreground/90 font-medium flex items-start gap-2 leading-relaxed">
-                                                <div className="w-1 h-1 bg-primary/40 rounded-full mt-1.5 shrink-0" />
-                                                {change}
+                                    <ul className="space-y-1">
+                                        {item.changes.map((c, i) => (
+                                            <li key={i} className="text-[13px] text-text2 flex items-start gap-2">
+                                                <span className="w-[3px] h-[3px] rounded-full bg-text3/40 mt-[7px] shrink-0" />
+                                                {c}
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
                             ))}
-                        </div>
-                    </motion.div>
-                )}
-
-                {currentView === 'thanks' && (
-                    <motion.div
-                        key="thanks"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
-                    >
-                        <button
-                            onClick={() => setCurrentView('menu')}
-                            className="flex items-center gap-2 text-[10px] font-black text-primary hover:opacity-80 transition-opacity mb-4"
-                        >
-                            <ChevronRight className="w-3.5 h-3.5 rotate-180" /> 返回设置
-                        </button>
-
-                        <div className="space-y-4">
-                            <div className="p-6 rounded-[2rem] bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/10 flex flex-col items-center justify-center text-center space-y-3">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center text-white shadow-xl shadow-red-500/30 text-3xl mb-1">
-                                    ❤️
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-black text-foreground">感恩有你</h3>
-                                    <p className="text-xs text-muted-foreground mt-1 px-4 leading-relaxed">
-                                        MyOwn 的每一步成长，都离不开你们的建议与陪伴。
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <div className="text-[10px] font-black tracking-widest text-muted-foreground uppercase ml-2 opacity-60">测试与建议</div>
-                                {/* Contributors List */}
-                                <div className="w-full p-4 rounded-[1.6rem] bg-black/[0.03] dark:bg-white/5 border border-black/[0.03] dark:border-white/5 flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20 shrink-0 text-lg">
-                                        🐕
-                                    </div>
-                                    <div>
-                                        <div className="text-sm font-black text-foreground">狗哥</div>
-                                        <div className="text-[10px] text-muted-foreground font-medium">首席测试官 (Chief Bug Hunter)</div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </motion.div>
                 )}

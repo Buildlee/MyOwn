@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body className={cn(inter_className, "antialiased min-h-screen bg-background text-foreground selection:bg-primary/20 transition-colors duration-300")}>
+      <body className={cn(inter_className, "antialiased min-h-screen bg-bg text-text selection:bg-accent/20")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
