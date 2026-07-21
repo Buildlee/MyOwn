@@ -114,7 +114,7 @@ export function SettingsDrawer({ isOpen, onClose, onShowGuide, enableStatsClick,
                             </div>
                         </div>
 
-                        <p className="text-center text-xs text-text3/50 font-mono pt-4">MyOwn v1.66.0</p>
+                        <p className="text-center text-xs text-text3/50 font-mono pt-4">MyOwn v2.0.0</p>
                     </motion.div>
                 )}
 
