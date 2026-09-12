@@ -75,6 +75,15 @@ body {
 .press { transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1); }
 .press:active { transform: scale(0.97); }
 
+/* 卡片入场：纯 CSS，走合成层，不依赖 JS
+   注意用 backwards 而非 both：动画结束后释放 transform，
+   否则会覆盖 framer-motion 的 layout 动画内联样式 */
+@keyframes card-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.card-in { animation: card-in 0.5s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 0; height: 0; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

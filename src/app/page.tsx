@@ -169,7 +169,7 @@ export default function Home() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleOpenAdd}
-        className="sm:hidden fixed bottom-8 right-6 w-14 h-14 bg-accent text-white rounded-full shadow-lg flex items-center justify-center z-[50] active:scale-95 transition-transform"
+        className="sm:hidden fixed bottom-8 right-6 h-14 px-6 bg-text text-bg rounded-full shadow-lg flex items-center gap-2 justify-center z-[50] press"
       >
         <Plus className="w-7 h-7" />
       </motion.button>

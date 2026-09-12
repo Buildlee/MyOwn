@@ -30,7 +30,12 @@ export function ItemCard({ item, delay = 0, onClick, onDelete, onPin }: ItemCard
     const reset = () => controls.start({ x: 0 });
 
     return (
-        <div className="relative overflow-hidden rounded-xl">
+        <motion.div
+            layout
+            initial={false}
+            style={{ animationDelay: `${delay}s` }}
+            className="relative overflow-hidden rounded-xl card-in"
+        >
             <div className="absolute inset-y-0 left-0 flex items-stretch">
                 <motion.div style={{ opacity: pinOpacity }}
                     className="w-[72px] bg-text rounded-xl flex items-center justify-center"
@@ -98,6 +103,6 @@ export function ItemCard({ item, delay = 0, onClick, onDelete, onPin }: ItemCard
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
 }

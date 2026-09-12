@@ -44,7 +44,7 @@ export function Drawer({ isOpen, onClose, children, title }: DrawerProps) {
                             {title && (
                                 <div className="px-6 pb-4 flex items-center justify-between">
                                     <h2 className="text-lg font-semibold text-text">{title}</h2>
-                                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface2 transition-colors text-text2">
+                                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-card2 transition-colors text-text2">
                                         <X className="w-[18px] h-[18px]" />
                                     </button>
                                 </div>
