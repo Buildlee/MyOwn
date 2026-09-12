@@ -4,7 +4,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { Background } from '@/components/Background';
 
 // const inter = Inter({ subsets: ['latin'] });
 const inter_className = ""; // Fallback to default sans-serif
@@ -27,14 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body className={cn(inter_className, "antialiased min-h-screen bg-bg text-text selection:bg-text/15")}>
+      <body className={cn(inter_className, "antialiased min-h-screen bg-bg text-label selection:bg-tint/20")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange={false}
         >
-          <Background />
           <div className="relative flex min-h-screen flex-col">
             {children}
           </div>

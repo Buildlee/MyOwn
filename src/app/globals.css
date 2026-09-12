@@ -1,103 +1,168 @@
 @import 'tailwindcss';
 
+/* ============================================================
+   MyOwn 设计系统 · iOS Inset Grouped
+   层次来源：两级背景色（页面底 / 组卡片）
+   参考：HIG 语义色 + insetGrouped 实测规范
+   ============================================================ */
+
 @theme {
-  --color-bg: var(--bg);
-  --color-card: var(--card);
-  --color-card2: var(--card2);
-  --color-text: var(--text);
-  --color-text2: var(--text2);
-  --color-text3: var(--text3);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
-  --font-mono: 'SF Mono', 'Geist Mono', monospace;
-  --radius: 0.75rem;
+  --color-bg:      var(--bg);
+  --color-card:    var(--card);
+  --color-label:   var(--label);
+  --color-label2:  var(--label2);
+  --color-label3:  var(--label3);
+  --color-sep:     var(--sep);
+  --color-fill:    var(--fill);
+  --color-tint:    var(--tint);
+  --color-tintsoft: var(--tint-soft);
+  --color-danger:  var(--red);
+  --color-ok:      var(--green);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', monospace;
 }
 
 :root {
-  --bg: oklch(0.97 0.005 80);
-  --card: oklch(0.99 0.003 75);
-  --card2: oklch(0.95 0.005 85);
-  --text: oklch(0.08 0.005 75);
-  --text2: oklch(0.38 0.005 80);
-  --text3: oklch(0.55 0.005 85);
-  --border: oklch(0.87 0.005 80);
-  --destructive: oklch(0.55 0.18 25);
+  /* ---- iOS 语义色 · 浅色 ---- */
+  --bg:        oklch(0.952 0.004 265);   /* systemGroupedBackground  #F2F2F7 */
+  --card:      oklch(1 0 0);             /* secondarySystemGroupedBackground */
+  --label:     oklch(0.16 0.004 265);    /* label */
+  --label2:    oklch(0.50 0.008 265);    /* secondaryLabel  6.0:1 */
+  --label3:    oklch(0.56 0.006 265);    /* tertiaryLabel   4.6:1（AA 下限） */
+  --sep:       oklch(0.855 0.006 265);   /* separator */
+  --fill:      oklch(0.90 0.004 265);    /* systemFill */
+  --tint:      oklch(0.585 0.165 42);
+  --tint-soft: oklch(0.585 0.165 42 / 0.12);
+  --red:       oklch(0.58 0.20 25);
+  --green:     oklch(0.63 0.155 148);
+
+  /* 类别占比的灰度阶梯（浅色：由深到浅） */
+  --cat-0: oklch(0.40 0.012 265);
+  --cat-1: oklch(0.56 0.012 265);
+  --cat-2: oklch(0.70 0.010 265);
+  --cat-3: oklch(0.83 0.006 265);
+
+  /* ---- 尺寸规范（insetGrouped 实测值）---- */
+  --pad:     16px;    /* 屏幕侧边距 */
+  --r-ctrl:  10px;    /* 控件圆角 */
+  --r-group: 14px;    /* 组卡片圆角 */
+  --r-sheet: 16px;    /* 抽屉圆角 */
+  --rowmin:  52px;    /* 两行行高 */
+  --secgap:  26px;    /* 区块间距 */
+
+  /* ---- 动效曲线 ---- */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-press: cubic-bezier(0.2, 0, 0, 1);
 }
 
 .dark {
-  --bg: oklch(0.08 0.003 75);
-  --card: oklch(0.13 0.005 80);
-  --card2: oklch(0.11 0.005 80);
-  --text: oklch(0.93 0.003 80);
-  --text2: oklch(0.58 0.005 80);
-  --text3: oklch(0.42 0.005 80);
-  --border: oklch(0.20 0.005 80);
-  --destructive: oklch(0.65 0.18 25);
+  /* 页面底压到近纯黑、卡片抬到 #2C2C2E 档，才拉得开分层 */
+  --bg:        oklch(0.045 0.001 265);
+  --card:      oklch(0.20 0.003 265);
+  --label:     oklch(0.97 0.002 265);
+  --label2:    oklch(0.70 0.006 265);    /* 6.8:1 */
+  --label3:    oklch(0.62 0.005 265);    /* 5.0:1 */
+  --sep:       oklch(0.32 0.005 265);
+  --fill:      oklch(0.27 0.004 265);
+  --tint:      oklch(0.70 0.150 46);
+  --tint-soft: oklch(0.70 0.150 46 / 0.16);
+  --red:       oklch(0.66 0.20 25);
+  --green:     oklch(0.70 0.15 148);
+
+  /* 深色反向：浅色段落更靠前 */
+  --cat-0: oklch(0.88 0.012 265);
+  --cat-1: oklch(0.70 0.012 265);
+  --cat-2: oklch(0.53 0.010 265);
+  --cat-3: oklch(0.37 0.006 265);
+
   color-scheme: dark;
 }
 
 body {
   background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+  transition: background-color 0.4s var(--ease-ios), color 0.4s var(--ease-ios);
 }
 
-/* Card base */
-.card {
+/* ---- 组卡片：一个区块一张，内部装多行 ---- */
+.group {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.875rem;
+  border-radius: var(--r-group);
+  overflow: hidden;
+}
+/* 深色下色差只有 ~1.5:1，靠描边补浮起感 */
+.dark .group,
+.dark .fillcard { box-shadow: 0 0 0 0.5px oklch(1 0 0 / 0.10); }
+
+.fillcard {
+  background: var(--card);
+  border-radius: var(--r-group);
+  overflow: hidden;
 }
 
-.card2 {
-  background: var(--card2);
-  border: 1px solid var(--border);
-  border-radius: 0.875rem;
+/* ---- 行：发丝分隔线左缩进对齐内容 ---- */
+.rowitem {
+  position: relative;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  transition: background-color 0.16s var(--ease-press);
+}
+.rowitem:active { background: var(--fill); }
+.rowitem + .rowitem::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 14px; right: 0; height: 1px;
+  background: var(--sep);
 }
 
-/* Separator */
-.sep { height: 1px; background: var(--border); }
-
-/* Backdrop */
-.backdrop {
-  background: oklch(0 0 0 / 0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+/* ---- 区块标题 ---- */
+.sechead {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--label2);
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+  padding: var(--secgap) var(--pad) 7px;
 }
-.dark .backdrop { background: oklch(0 0 0 / 0.55); }
 
-/* Button press */
-.press { transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1); }
-.press:active { transform: scale(0.97); }
+/* ---- 触感 ---- */
+.press { transition: transform 0.18s var(--ease-press); }
+.press:active { transform: scale(0.94); }
 
-/* 卡片入场：纯 CSS，走合成层，不依赖 JS
-   注意用 backwards 而非 both：动画结束后释放 transform，
-   否则会覆盖 framer-motion 的 layout 动画内联样式 */
+/* ---- 卡片入场：纯 CSS，走合成层，不依赖 JS
+       backwards 填充：动画结束即释放 transform，
+       否则会覆盖 framer-motion 的 layout 内联样式 ---- */
 @keyframes card-in {
   from { opacity: 0; transform: translate3d(0, 10px, 0); }
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-.card-in { animation: card-in 0.5s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+.card-in { animation: card-in 0.5s var(--ease-ios) backwards; }
 
-/* Scrollbar */
+/* ---- 刻度条生长 ---- */
+@keyframes scale-in { from { transform: scaleX(0); } }
+.scale-in { transform-origin: left; animation: scale-in 0.62s var(--ease-ios) backwards; }
+
+/* ---- 滚动条 ---- */
 ::-webkit-scrollbar { width: 0; height: 0; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 @layer utilities {
-  .text-balance { text-wrap: balance; }
   .tracking-tightest { letter-spacing: -0.04em; }
 }
 
-/* Reduced motion */
+/* ---- 减少动效 ---- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 }

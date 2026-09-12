@@ -25,32 +25,40 @@ export function Drawer({ isOpen, onClose, children, title }: DrawerProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.28 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-[200] backdrop"
+                        className="fixed inset-0 z-[200] backdrop-blur-[2px]"
+                        style={{ background: 'oklch(0 0 0 / 0.4)' }}
                     />
                     <motion.div
                         initial={{ y: '100%' }}
                         animate={{ y: 0 }}
                         exit={{ y: '100%' }}
-                        transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.9 }}
-                        className="fixed inset-x-0 bottom-0 z-[210] bg-bg rounded-t-2xl max-h-[85vh] overflow-y-auto shadow-[0_-4px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_40px_rgba(0,0,0,0.3)]"
+                        transition={{ type: 'spring', damping: 32, stiffness: 300, mass: 0.9 }}
+                        className="fixed inset-x-0 bottom-0 z-[210] bg-bg max-h-[90vh] overflow-y-auto no-scrollbar rounded-t-[16px]"
                     >
                         {/* Grabber */}
-                        <div className="sticky top-0 z-10 bg-bg rounded-t-2xl">
-                            <div className="flex justify-center pt-2 pb-1">
-                                <div className="w-9 h-[4px] rounded-full bg-border" />
+                        <div className="sticky top-0 z-10 bg-bg rounded-t-[16px]">
+                            <div className="flex justify-center pt-2 pb-0.5">
+                                <span className="block w-9 h-[5px] rounded-full bg-sep" />
                             </div>
                             {title && (
-                                <div className="px-6 pb-4 flex items-center justify-between">
-                                    <h2 className="text-lg font-semibold text-text">{title}</h2>
-                                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-card2 transition-colors text-text2">
-                                        <X className="w-[18px] h-[18px]" />
-                                    </button>
+                                <div className="flex items-center justify-between px-4 pt-1.5 pb-3.5">
+                                    <h2 className="text-[20px] font-bold tracking-[-0.022em] text-label">
+                                        {title}
+                                    </h2>
+                                    <motion.button
+                                        whileTap={{ scale: 0.87 }}
+                                        onClick={onClose}
+                                        aria-label="关闭"
+                                        className="w-8 h-8 grid place-items-center rounded-full bg-fill text-label2"
+                                    >
+                                        <X className="w-[15px] h-[15px]" strokeWidth={2.6} />
+                                    </motion.button>
                                 </div>
                             )}
                         </div>
-                        <div className="px-6 pb-6">{children}</div>
+                        <div className="px-4 pb-8">{children}</div>
                     </motion.div>
                 </>
             )}

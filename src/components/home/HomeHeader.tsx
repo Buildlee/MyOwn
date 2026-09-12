@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Moon, MoreVertical, Plus } from 'lucide-react';
+import { Moon, Sun, MoreVertical, Plus } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 interface HomeHeaderProps {
@@ -10,9 +10,14 @@ interface HomeHeaderProps {
     onOpenSettings: () => void;
     onOpenAdd: () => void;
     mounted: boolean;
+    title?: string;
+    subtitle?: string;
 }
 
-export function HomeHeader({ isScrolled, onOpenSettings, onOpenAdd, mounted }: HomeHeaderProps) {
+export function HomeHeader({
+    isScrolled, onOpenSettings, onOpenAdd, mounted,
+    title = '物品成本', subtitle = '记录每一件物品的真实花费',
+}: HomeHeaderProps) {
     const { theme, setTheme } = useTheme();
     const [busy, setBusy] = useState(false);
 
@@ -20,53 +25,56 @@ export function HomeHeader({ isScrolled, onOpenSettings, onOpenAdd, mounted }: H
         <motion.header
             initial={false}
             animate={{
-                backgroundColor: isScrolled
-                    ? 'var(--bg)'
-                    : 'oklch(0 0 0 / 0)',
-                borderBottomColor: isScrolled
-                    ? 'var(--border)'
-                    : 'oklch(0 0 0 / 0)',
+                boxShadow: isScrolled
+                    ? '0 1px 0 var(--sep), 0 1px 12px rgba(0,0,0,0.04)'
+                    : '0 1px 0 transparent, 0 0 0 rgba(0,0,0,0)',
             }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="sticky top-0 z-[100] backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-3 px-5"
-            style={{ borderBottomWidth: 1, borderBottomStyle: 'solid' }}
+            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+            className="sticky top-0 z-20 shrink-0 bg-bg px-4 pt-0.5 pb-2"
         >
-            <div className="flex items-center justify-between">
-                <div className="flex-1">
-                    <h1 className="text-[34px] font-bold text-text tracking-tight leading-tight">
-                        MyOwn
+            <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                    <h1 className="text-[34px] font-bold tracking-[-0.026em] leading-[1.1] text-label truncate">
+                        {title}
                     </h1>
-                    <p className="text-sm text-text2 font-medium -mt-0.5">
-                        真实物品成本
-                    </p>
+                    <p className="text-[13px] text-label2 mt-px truncate">{subtitle}</p>
                 </div>
-                <div className="flex items-center gap-1 self-start mt-1">
+
+                <div className="flex items-center gap-0.5 mt-1.5 shrink-0">
                     {mounted && (
                         <motion.button
-                            whileTap={{ scale: 0.9 }}
+                            whileTap={{ scale: 0.87 }}
+                            aria-label="切换主题"
                             onClick={() => {
                                 if (busy) return;
                                 setBusy(true);
                                 setTheme(theme === 'dark' ? 'light' : 'dark');
                                 setTimeout(() => setBusy(false), 400);
                             }}
-                            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-card2 active:bg-card transition-colors text-text2"
+                            className="w-8 h-8 grid place-items-center rounded-full bg-fill text-label2 active:opacity-60 transition-opacity"
                         >
-                            {theme === 'dark' ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+                            {theme === 'dark'
+                                ? <Sun className="w-[17px] h-[17px]" />
+                                : <Moon className="w-[17px] h-[17px]" />}
                         </motion.button>
                     )}
-                    <button
+                    <motion.button
+                        whileTap={{ scale: 0.87 }}
+                        aria-label="设置"
                         onClick={onOpenSettings}
-                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-card2 active:bg-card transition-colors text-text2"
+                        className="w-8 h-8 grid place-items-center rounded-full bg-fill text-label2 active:opacity-60 transition-opacity"
                     >
-                        <MoreVertical className="w-[18px] h-[18px]" />
-                    </button>
-                    <button
+                        <MoreVertical className="w-[17px] h-[17px]" />
+                    </motion.button>
+                    <motion.button
+                        whileTap={{ scale: 0.88 }}
+                        aria-label="添加物品"
                         onClick={onOpenAdd}
-                        className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full bg-text text-bg hover:opacity-85 active:scale-95 transition-all press"
+                        className="w-8 h-8 grid place-items-center rounded-full text-white shadow-[0_2px_8px_var(--tint-soft)] transition-opacity active:opacity-85"
+                        style={{ background: 'var(--tint)' }}
                     >
-                        <Plus className="w-[18px] h-[18px]" />
-                    </button>
+                        <Plus className="w-[18px] h-[18px]" strokeWidth={2.8} />
+                    </motion.button>
                 </div>
             </div>
         </motion.header>

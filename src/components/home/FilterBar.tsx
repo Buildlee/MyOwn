@@ -1,65 +1,68 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowDownUp } from 'lucide-react';
+
+type SortBy = 'date' | 'value' | 'cost';
 
 interface FilterBarProps {
-    sortBy: 'date' | 'value' | 'cost';
-    setSortBy: (val: 'date' | 'value' | 'cost') => void;
+    sortBy: SortBy;
+    setSortBy: (val: SortBy) => void;
     sortOrder: 'asc' | 'desc';
     onToggleOrder: () => void;
 }
 
-export function FilterBar({ sortBy, setSortBy, sortOrder, onToggleOrder }: FilterBarProps) {
-    const items = [
-        { id: 'date' as const, label: '时间' },
-        { id: 'value' as const, label: '价值' },
-        { id: 'cost' as const, label: '成本' },
-    ];
+const OPTIONS: { id: SortBy; label: string }[] = [
+    { id: 'date', label: '时间' },
+    { id: 'value', label: '价值' },
+    { id: 'cost', label: '成本' },
+];
 
+/** iOS 原生分段控件：白色滑块浮在灰轨道上 */
+export function FilterBar({ sortBy, setSortBy, sortOrder, onToggleOrder }: FilterBarProps) {
     return (
-        <motion.div
-            initial={{ y: 8, opacity: 0.9 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-3"
-        >
-            <div className="flex-1 flex bg-card2 rounded-[0.625rem] p-0.5 border border-border">
-                {items.map(s => (
-                    <button
-                        key={s.id}
-                        onClick={() => setSortBy(s.id)}
-                        className={`flex-1 py-[7px] text-[13px] font-medium rounded-[0.4375rem] transition-all press ${
-                            sortBy === s.id
-                                ? 'bg-text text-bg shadow-sm'
-                                : 'text-text2 hover:text-text'
-                        }`}
-                    >
-                        {s.label}
-                    </button>
-                ))}
+        <div className="flex items-center gap-3 px-3.5 py-2.5">
+            <div className="flex-1 flex bg-fill rounded-[9px] p-0.5 relative">
+                {OPTIONS.map(o => {
+                    const on = sortBy === o.id;
+                    return (
+                        <button
+                            key={o.id}
+                            onClick={() => setSortBy(o.id)}
+                            className="flex-1 relative z-10 py-1.5 text-[13px] rounded-[7px] transition-colors"
+                            style={{
+                                color: on ? 'var(--label)' : 'var(--label2)',
+                                fontWeight: on ? 600 : 500,
+                            }}
+                        >
+                            {on && (
+                                <motion.span
+                                    layoutId="sort-pill"
+                                    transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                                    className="absolute inset-0 rounded-[7px] bg-card shadow-[0_1.5px_4px_rgba(0,0,0,0.14)] dark:bg-[oklch(0.34_0.004_265)]"
+                                    style={{ zIndex: -1 }}
+                                />
+                            )}
+                            {o.label}
+                        </button>
+                    );
+                })}
             </div>
 
             <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.85 }}
                 onClick={onToggleOrder}
-                className="w-[34px] h-[34px] flex items-center justify-center rounded-[0.625rem] bg-card2 border border-border text-text2 hover:text-text transition-colors"
+                aria-label={sortOrder === 'desc' ? '从大到小' : '从小到大'}
+                className="w-7 h-7 grid place-items-center rounded-lg text-label2 active:opacity-60 transition-opacity"
             >
-                <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                        key={sortOrder}
-                        initial={{ opacity: 0, rotate: sortOrder === 'desc' ? -90 : 90, scale: 0.7 }}
-                        animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                        exit={{ opacity: 0, rotate: sortOrder === 'desc' ? 90 : -90, scale: 0.7 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    >
-                        {sortOrder === 'desc'
-                            ? <ArrowDownWideNarrow className="w-[16px] h-[16px]" />
-                            : <ArrowUpNarrowWide className="w-[16px] h-[16px]" />
-                        }
-                    </motion.div>
-                </AnimatePresence>
+                <motion.span
+                    animate={{ rotate: sortOrder === 'desc' ? 0 : 180 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                    className="grid place-items-center"
+                >
+                    <ArrowDownUp className="w-[15px] h-[15px]" />
+                </motion.span>
             </motion.button>
-        </motion.div>
+        </div>
     );
 }
