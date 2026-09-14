@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 android/.idea
+
+# 验证脚本生成的截图
+/scripts/app-home-*.png
