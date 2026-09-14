@@ -5,24 +5,28 @@ export const recognizeImage = async (file: File): Promise<string> => {
     // 1. Preprocess Image (Dark Mode -> Light Mode, Grayscale, Contrast)
     const processedImage = await preprocessImage(file);
 
-    // 2. OCR (Enable both Chinese and English to prevent alphanumeric garbling)
-    // Use the "best" traineddata (larger files, higher accuracy)
+    // 识别引擎及中英文模型随安装包分发，默认不上传小票或依赖 CDN。
     const worker = await createWorker(['chi_sim', 'eng'], 1, {
-        langPath: 'https://tessdata.projectnaptha.com/4.0.0_best',
+        workerPath: new URL('/ocr/worker.min.js', window.location.origin).href,
+        corePath: new URL('/ocr/', window.location.origin).href,
+        langPath: new URL('/ocr/', window.location.origin).href,
         gzip: false
     });
-    const ret = await worker.recognize(processedImage);
-    await worker.terminate();
-
-    // 3. Post-process (Cleanup Chinese spaces and artifacts)
-    return cleanupOCRText(ret.data.text);
+    try {
+        const ret = await worker.recognize(processedImage);
+        return cleanupOCRText(ret.data.text);
+    } finally {
+        await worker.terminate();
+    }
 };
 
 // Helper to clean up Chinese OCR artifacts
 const cleanupOCRText = (text: string): string => {
     return text
         // Remove spaces between Chinese characters (lookbehind/lookahead for Chinese range)
-        .replace(/(?<=[\u4e00-\u9fa5])\s+(?=[\u4e00-\u9fa5])/g, '')
+        // 只用 [^\S\n]（行内空白）而非 \s：\s 会连换行一起吃掉，
+        // 把相邻两行粘成一行，下游按行解析时名称与价格行合并，名称就丢了。
+        .replace(/(?<=[\u4e00-\u9fa5])[^\S\n]+(?=[\u4e00-\u9fa5])/g, '')
         // Fix common OCR currency errors
         .replace(/\b[yY]\s*(\d)/g, '¥$1')
         .replace(/元\s*(\d)/g, '¥$1');
@@ -251,35 +255,52 @@ export const parseItemDetails = (text: string): Partial<Item> => {
     // Step C: Search for Name
     let candidateName = '';
 
-    // If store found, look immediately after it
+    // 价格 / 日期段的分界词：名称段落到这里结束
+    const stopKeywords = [
+        '实付款', '实付', '合计', '应付款', '成交价', '商品总价',
+        '下单', '付款时间', '创建时间', '交易时间',
+    ];
+    // 名称与价格本就在同一行时（如 "笔记本电脑实付款 ¥1280"），
+    // 直接 break 会把名称一起丢掉，所以先取分界词之前的部分作为候选。
+    const stopIndexIn = (line: string) => {
+        let cut = -1;
+        for (const kw of stopKeywords) {
+            const idx = line.indexOf(kw);
+            if (idx >= 0 && (cut === -1 || idx < cut)) cut = idx;
+        }
+        return cut;
+    };
+
+    // 若店铺名被识别到，优先从它下一行找；找不到再从头扫一遍兜底
     const startIdx = storeNameIndex !== -1 ? storeNameIndex + 1 : 0;
 
-    for (let i = startIdx; i < lines.length; i++) {
-        const line = lines[i];
+    const collect = (from: number) => {
+        for (let i = from; i < lines.length; i++) {
+            const raw = lines[i];
+            const cut = stopIndexIn(raw);
+            // 分界词出现在行首：本行全是价格/日期，名称段已结束
+            if (cut === 0) return;
+            const line = cut > 0 ? raw.slice(0, cut).trim() : raw;
 
-        // Stop if we hit price/date section (usually lower down)
-        if (line.includes('实付') || line.includes('合计') || line.includes('下单')) break;
-
-        if (!isNoise(line)) {
-            // Strong signal: Pinduoduo style 【Title】
             if (line.startsWith('【') || line.includes('】')) {
                 candidateName = line;
-                break;
+                return;
             }
-
-            // If we found a store, the very next non-noise line is likely the product
-            if (storeNameIndex !== -1) {
-                candidateName = line;
-                break;
+            if (!isNoise(line)) {
+                // 找到店铺后，紧随其后的第一条正文行即商品名；
+                // 没有店铺锚点时才要求足够长度，避免误取短标题
+                if (storeNameIndex !== -1 || line.length > 6) {
+                    candidateName = line;
+                    return;
+                }
             }
-
-            // Fallback: First reasonable length line if no store found
-            if (!candidateName && line.length > 6) {
-                candidateName = line;
-                break;
-            }
+            // 已经切到价格行且前缀没取到名字，后面不会再有名称
+            if (cut > 0) return;
         }
-    }
+    };
+
+    collect(startIdx);
+    if (!candidateName && startIdx > 0) collect(0);
 
     // New: Remove common prefixes/suffixes/tags from name
     if (candidateName) {
