@@ -18,3 +18,16 @@ assert.throws(()=>d.readItems('not json'));assert.throws(()=>d.readItems(JSON.st
 assert.throws(()=>d.readItems(JSON.stringify([{...base,price:'100'}])));
 assert.notEqual(d.validateItem({...base,name:' '}),'');
 console.log('PASS: date boundaries, unit separation, sold exclusion, legacy schema, invalid data protection.');
+assert.equal(d.sortValue(base,'unit'),100);
+assert.equal(d.sortValue({...base,quantity:4},'unit'),25);
+assert.equal(d.unitCost({...base,quantity:4,costType:'per_use',usageCount:2}),50);
+assert.throws(()=>d.readItems(JSON.stringify([{...base,quantity:0}])));
+assert.notEqual(d.validateItem({...base,quantity:1.5}),'');
+const sample=[{...base,id:'a',price:100,quantity:1,isPinned:false},{...base,id:'b',price:120,quantity:4,isPinned:true},{...base,id:'c',price:50,isPinned:false,costType:'per_use',usageCount:0}];
+assert.equal(d.sortItems(sample,'unit',true,false).map(x=>x.id).join(','),'b,c,a');
+assert.equal(d.sortItems(sample,'total',false,false).map(x=>x.id).join(','),'b,a,c');
+assert.equal(d.sortItems(sample,'total',true,true)[0].id,'b');
+assert.equal(d.sortItems(sample,'daily',true,false).length,2);
+assert.equal(d.sortItems(sample,'per_use',false,false).length,1);
+assert.equal(d.sortItems([...sample,{...base,id:'d',costType:'per_use',usageCount:2}],'per_use',false,false).map(x=>x.id).join(','),'d,c');
+console.log('PASS: quantity compatibility, total-based amortization, ordering, pin priority, incomparable units, missing cost last.');

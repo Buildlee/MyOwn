@@ -5,6 +5,7 @@ export interface Item {
     id: string;
     name: string;
     price: number;
+    quantity?: number;
     purchaseDate: string;
     usageCount: number;
     costType: CostType;

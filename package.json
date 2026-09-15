@@ -1,6 +1,6 @@
 {
   "name": "my-own",
-  "version": "2.3.0",
+  "version": "2.4.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "lint": "eslint",
     "cap:sync": "cap sync",
     "assets:generate": "npx @capacitor/assets generate --android",
-    "apk:build": "npm run build && npx cap sync && npm run assets:generate && cd android && gradlew assembleDebug"
+    "apk:build": "npm run build && npx cap sync android && cd android && gradlew assembleDebug"
   },
   "dependencies": {
     "next": "16.1.1",
