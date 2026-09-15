@@ -1,45 +1,6 @@
-import type { Metadata } from 'next';
-// import { Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { cn } from '@/lib/utils';
-
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { Background } from '@/components/Background';
-
-// const inter = Inter({ subsets: ['latin'] });
-const inter_className = ""; // Fallback to default sans-serif
-
-export const metadata: Metadata = {
-  title: 'MyOwn - 真实物品成本',
-  description: '追踪你物品的真实使用成本',
-};
-
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  viewportFit: 'cover',
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body className={cn(inter_className, "antialiased min-h-screen bg-bg text-text selection:bg-accent/20")}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false}
-        >
-          <Background />
-          <div className="relative flex min-h-screen flex-col">
-            {children}
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
-}
+export const metadata: Metadata = { title: 'MyOwn · 物品成本', description: '追踪每件物品的真实使用成本' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' };
+export default function RootLayout({children}: Readonly<{children:React.ReactNode}>){return <html lang="zh-CN" suppressHydrationWarning><body><ThemeProvider attribute="class" defaultTheme="system" enableSystem>{children}</ThemeProvider></body></html>;}

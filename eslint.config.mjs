@@ -12,7 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "android/**/build/**",
+    "android/app/src/main/assets/**",
+    "android/capacitor-cordova-android-plugins/**",
+    "work/**",
   ]),
+  { files: ["scripts/*.cjs"], rules: { "@typescript-eslint/no-require-imports": "off" } },
 ]);
 
 export default eslintConfig;
