@@ -18,6 +18,8 @@
 
 ### 文档与交付
 
+- 修正完整 ESLint 检查范围，排除 Android 生成资源与工作目录；测试脚本允许 CommonJS。
+
 - README 对齐实际的八种排序、数量与单价、30 / 90 天预测、数据边界和 Android 构建步骤。
 - 分支不跟踪 APK、已安装依赖、编译缓存、签名密钥和已移除的 OCR 资源；保留锁文件、应用图标和 Gradle Wrapper。
 - Android 包名 `io.buildlee.myown`，版本 `2.4.2`，`versionCode` 为 `8`。
