@@ -40,3 +40,28 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 android/.idea
+
+# 验证脚本生成的截图
+/scripts/app-home-*.png
+
+# Local verification artifacts
+/work/verification/
+# Build outputs and installed dependencies (all levels)
+node_modules/
+.next/
+out/
+build/
+dist/
+.gradle/
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+*.jks
+*.keystore
+*.traineddata
+*.traineddata.gz
+/public/ocr/
+/work/
